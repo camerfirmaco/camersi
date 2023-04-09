@@ -1,0 +1,12 @@
+server:
+  port: 8081
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          default-label: base #nombre de la rama de git
+          uri: https://github.com/camerfirmaco/camersi.git #enlace del repositorio
+          search-paths: config-data #configuración de los servicios
+  application:
+    name: config-service #nombre del servicio

@@ -1,0 +1,11 @@
+package colombia.authservice.Utils;
+
+public enum EnumTipoDocumento {
+    CC, // CEDULA DE CIUDADANIA
+    CE, // CEDULA DE EXTRANJERIA
+    NIP, // NUMERO DE IDENTIFICACION PERSONAL
+    NIT, // NUMERO DE IDENTIFICACION TRIBUTARIA
+    TI, // TARJETA DE IDENTIDAD
+    PAP, // PASAPORTE
+
+}

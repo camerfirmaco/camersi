@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: auth-service
+  cloud:
+    config:
+      enabled: true
+      uri: http://localhost:8081
+    vault:
+      application:
+        name: auth-service
+      scheme: http
+      authentication: TOKEN
+      host: localhost
+      token: 00000000-0000-0000-0000-000000000000
+      port: '8200'
+jwt:
+  secret: secret
+  expiration-milliseconds: 120000
