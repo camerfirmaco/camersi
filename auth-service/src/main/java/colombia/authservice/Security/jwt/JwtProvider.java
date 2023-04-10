@@ -1,5 +1,6 @@
 package colombia.authservice.Security.jwt;
 
+import java.util.Base64;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import jakarta.annotation.PostConstruct;
 
 @Component
 public class JwtProvider {
@@ -30,6 +32,11 @@ public class JwtProvider {
     // Tiempo base de expiración
     @Value("${jwt.expiration-milliseconds}")
     private Integer expiration;
+
+    @PostConstruct
+    protected void init() {
+        secret = Base64.getEncoder().encodeToString(secret.getBytes());
+    }
 
     // INYECCIÓN DE LA IMPLEMENTACIÓN DEL SERVICIO USUARIO
     @Autowired
@@ -46,7 +53,7 @@ public class JwtProvider {
         return Jwts.builder().setSubject(mainUser.getUsername()) // ASIGNACIÓN DE JWT - USERNAME
                 .setIssuedAt(new Date()) // ASIGNACIÓN DE JWT - FECHA DE EMISIÓN
                 .setExpiration(new Date(new Date().getTime() + expiration * 1000)) // ASIGNACIÓN DE JWT - EXPIRACIÓN
-                .signWith(SignatureAlgorithm.HS512, secret) // ASIGNACIÓN DE JWT - FIRMA
+                .signWith(SignatureAlgorithm.HS256, secret) // ASIGNACIÓN DE JWT - FIRMA
                 .compact();
     }
 
