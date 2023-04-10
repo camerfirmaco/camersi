@@ -9,6 +9,10 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     prefer-ip-address: true
+  admin-paths:
+    paths:
+      - uri: "/usuario/"
+        method: "POST"
 spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
