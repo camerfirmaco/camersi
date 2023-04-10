@@ -21,3 +21,11 @@ spring:
           uri: lb://auth-service
           predicates:
             - Path=/auth/**
+        - id: support-service
+          uri: lb://support-service
+          predicates:
+            - Path=/support/**
+        - id: operations-service
+          uri: lb://operations-service
+          predicates:
+            - Path=/operations/**
