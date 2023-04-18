@@ -10,12 +10,12 @@ const useSignIn: any = (url: string) => {
         const abortController = new AbortController();
         setController(abortController);
 
-        fetch(url, { signal: abortController.signal })
+        fetch(url, {method:'POST', mode: "no-cors", body: JSON.stringify({"username": "marcos.rincon1903@gmail.com","password": "hola"}), headers:{'Access-Control-Allow-Origin': 'http://localhost:5173', 'Content-Type': 'application/json'}, signal: abortController.signal })
             .then((response) => response.json())
             .then((json) => setData(json))
             .catch((error) => {
-                if (error.name === "AbortError") {
-                    console.log("Cancelled request");
+                if (error.name === 'AbortError') {
+                    console.log('Cancelled request');
                 } else {
                     setError(error);
                 }
@@ -28,7 +28,7 @@ const useSignIn: any = (url: string) => {
     const handleCancelRequest = () => {
         if (controller) {
             controller.abort();
-            setError("Cancelled Request");
+            setError('Cancelled Request');
         }
     };
 
