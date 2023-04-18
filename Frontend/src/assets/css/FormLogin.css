@@ -1,0 +1,72 @@
+:root {
+    --bandera-amarillo: #F7CA14;
+    --bandera-azul: #243786;
+    --bandera-rojo: #E4161C;
+    --azul-claro: #0075A6;
+    --azul-neutro: #175173;
+    --azul-oscuro: #162E4D;
+    --blanco: #ffffffbd;
+    --azul: #175173bd;
+    --while: #ffff;
+  }
+    .row_form_login {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100vh;
+      min-height: 600px;
+      background-color: black;
+      background-image: url(./../../assets/img/fondo-azul.png);
+      background-position: center;
+      background-repeat: repeat;
+      background-size: cover;
+    }
+    .col_form_login {
+      min-width: 330px;
+      max-width: 700px;
+      height: 90%;
+      padding: 60px;
+      background-color: var(--blanco);
+      border-radius: 30px;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      box-shadow: 0px 0px 40px 0px var(--azul-oscuro);
+    }
+    .login-form-button {
+      background-color: var(--azul-neutro);
+    }
+    .login-form-button:not(:disabled):hover{
+      background-color: var(--azul-claro);
+    }
+    #title_form_login{
+      color: var(--azul-oscuro);
+    }
+    .title_form_login{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .row_form_signin{
+        max-width: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 659px) {
+      .img_login{
+        display: none;
+      }
+      .col_login{
+        border-radius: 30px;
+        flex-direction: column;
+      }
+      .title_login{
+        display: none;
+      }
+
+    }

@@ -1,0 +1,33 @@
+:root {
+    --bandera-amarillo: #F7CA14;
+    --bandera-azul: #243786;
+    --bandera-rojo: #E4161C;
+    --azul-claro: #0075A6;
+    --azul-neutro: #175173;
+    --azul-oscuro: #162E4D;
+    --blanco: #ffffffbd;
+    --azul: #175173bd;
+    --while: #ffff;
+}
+
+.layout-dashboard {
+    min-height: 100vh;
+}
+
+.nav-dashboard {
+    height: 60px;
+    padding:  15px;
+}
+
+.logo-dashboard{
+    width: 140px;
+}
+
+.header-dashboard{
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+}
+.avatar-dashboard{
+    margin: 10px 10px 10px 10px;
+}

@@ -63,8 +63,13 @@ public class ControllerAuth {
                             "Inicio de sesión fallido", e.getMessage()));
         }
     }
-
-   
+    @PostMapping(value="/validate")
+    public ResponseEntity<?> postMethodName() {
+        
+        return ResponseEntity.accepted().body(new MessageDetails(HttpStatus.ACCEPTED, EnumOperacion.TOKEN, new Date(),
+        "Token aceptado, procede a ruta", null));
+    }
+    
     
 
 }

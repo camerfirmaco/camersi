@@ -10,4 +10,5 @@ public enum EnumOperacion {
     LOGIN, // ERROR DE INICIO DE SESIÓN
     VALIDACION, // ERROR DE VALIDACIÓN DE DATOS
     OTROS,
+    TOKEN
 }
