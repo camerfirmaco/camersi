@@ -1,139 +1,80 @@
 import React, { useState } from 'react';
-import './index.css';
-import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space } from 'antd';
-
-const { Option } = Select;
-
+import { Button, Form, Steps, Tooltip, Typography } from 'antd';
+import { UserOutlined, SmileOutlined, MailOutlined, ArrowLeftOutlined, QuestionCircleOutlined, CheckCircleFilled, ArrowRightOutlined } from '@ant-design/icons';
+import PinField from 'react-pin-field';
+import { Link } from 'react-router-dom';
+const { Title } = Typography;
 const App: React.FC = () => {
-  const [open, setOpen] = useState(false);
 
-  const showDrawer = () => {
-    setOpen(true);
-  };
 
-  const onClose = () => {
-    setOpen(false);
-  };
+  const [code, setCode] = useState(String);
+  const [completed, setCompleted] = useState(false);
 
   return (
     <>
-      <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
-        New account
-      </Button>
-      <Drawer
-        title="Create a new account"
-        width={720}
-        onClose={onClose}
-        open={open}
-        bodyStyle={{ paddingBottom: 80 }}
-        extra={
-          <Space>
-            <Button onClick={onClose}>Cancel</Button>
-            <Button onClick={onClose} type="primary">
-              Submit
-            </Button>
-          </Space>
-        }
-      >
-        <Form layout="vertical" hideRequiredMark>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="name"
-                label="Name"
-                rules={[{ required: true, message: 'Please enter user name' }]}
-              >
-                <Input placeholder="Please enter user name" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="url"
-                label="Url"
-                rules={[{ required: true, message: 'Please enter url' }]}
-              >
-                <Input
-                  style={{ width: '100%' }}
-                  addonBefore="http://"
-                  addonAfter=".com"
-                  placeholder="Please enter url"
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="owner"
-                label="Owner"
-                rules={[{ required: true, message: 'Please select an owner' }]}
-              >
-                <Select placeholder="Please select an owner">
-                  <Option value="xiao">Xiaoxiao Fu</Option>
-                  <Option value="mao">Maomao Zhou</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="type"
-                label="Type"
-                rules={[{ required: true, message: 'Please choose the type' }]}
-              >
-                <Select placeholder="Please choose the type">
-                  <Option value="private">Private</Option>
-                  <Option value="public">Public</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                name="approver"
-                label="Approver"
-                rules={[{ required: true, message: 'Please choose the approver' }]}
-              >
-                <Select placeholder="Please choose the approver">
-                  <Option value="jack">Jack Ma</Option>
-                  <Option value="tom">Tom Liu</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="dateTime"
-                label="DateTime"
-                rules={[{ required: true, message: 'Please choose the dateTime' }]}
-              >
-                <DatePicker.RangePicker
-                  style={{ width: '100%' }}
-                  getPopupContainer={(trigger) => trigger.parentElement!}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                name="description"
-                label="Description"
-                rules={[
-                  {
-                    required: true,
-                    message: 'please enter url description',
-                  },
-                ]}
-              >
-                <Input.TextArea rows={4} placeholder="please enter url description" />
-              </Form.Item>
-            </Col>
-          </Row>
-        </Form>
-      </Drawer>
+      <Steps
+        current={0}
+        status="process"
+        items={[
+          {
+            title: 'Información personal',
+            icon: <UserOutlined />
+          },
+          {
+            title: 'Verificación de correo',
+            icon: <MailOutlined />
+          },
+          {
+            title: 'Registro exitoso',
+            icon: <SmileOutlined />
+          },
+        ]}
+      />
+      {true ?
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Form
+            layout="vertical"
+            name='normal_login_password'
+            className='login_password-form'
+            style={{ width: "100%", minWidth: "250px", maxWidth: "350px" }}
+          >
+            <Form.Item className='title_login_password' >
+              <Title id='title_login_password' style={{ marginBottom: "0" }} level={3}>Verificación de Correo</Title>
+            </Form.Item>
+            <Form.Item className='pin-field-container' style={{ marginBottom: "30px" }} >
+              <Tooltip title={"Digite el PIN que fue enviado al correo " + " IMPORTANTE: Solo tiene un intento"}>
+                <QuestionCircleOutlined style={{ margin: "10px" }} />
+              </Tooltip>
+              <PinField
+                className="pin-field"
+                disabled={completed}
+                onChange={setCode}
+                length={6}
+                onComplete={() => setCompleted(true)}
+                format={k => k.toUpperCase()}
+                validate="0123456789" inputMode="numeric"
+              />
+              <Tooltip title={completed ? "" : "Por favor digitar el PIN enviado al correo"}>
+                <CheckCircleFilled style={completed ? { margin: "10px", color: "#52c41a" } : { margin: "10px" }} />
+              </Tooltip>
+            </Form.Item>
+            <Form.Item style={{ display: "flex", justifyContent: "space-around" }}>
+                <Button type='default'  >
+                  <ArrowLeftOutlined />Regresar
+                </Button>
+              <Tooltip title={"Se enviara el correo a la siguiente dirección de correo: "}>
+                <Button className='login_password-form-button' type='primary'  >
+                  Reenviar
+                </Button>
+              </Tooltip>
+              <Button disabled={!completed} type='primary' className='login_password-form-button'>
+                Verificar <ArrowRightOutlined />
+              </Button>
+            </Form.Item>
+          </Form> </div> : <></>}
     </>
-  );
+
+  )
 };
 
 export default App;

@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.Optional;
 
 import colombia.authservice.Mapping.Cargo.DtoCreateCargo;
+import colombia.authservice.Mapping.Public.DtoNewPassword;
+import colombia.authservice.Mapping.Public.DtoPassword;
 import colombia.authservice.Mapping.Usuario.DtoCreateUsuario;
 import colombia.authservice.Mapping.Usuario.DtoUpdateAdmin;
 import colombia.authservice.Mapping.Usuario.DtoUpdateUsuario;
 import colombia.authservice.Mapping.Usuario.DtoUsuario;
 import colombia.authservice.Utils.EnumAcciones;
 import colombia.authservice.Utils.EnumRole;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
 
 public interface ServiceUsuario {
     Optional<DtoUsuario> consultarId(String id); // CONSULTAR POR ID
@@ -43,5 +47,13 @@ public interface ServiceUsuario {
     DtoUsuario editar(String id, DtoUpdateUsuario usuario); // EDITAR PERFIL
 
     DtoUsuario actualizar(String id, DtoUpdateAdmin usuario); // ACTUALIZAR USUARIO
+
+    String[] olvidoPasword(DtoPassword dto) throws AddressException, MessagingException; //RECUPERAR CONTRASEÑA
+
+    Boolean newPasword(DtoNewPassword dto); //NUEVA CONTRASEÑA
+
+    String valideMail(String email); //VALIDAR EMAIL
+
+    boolean valideMailKey(String[] valide); //VALIDAR KEY Y PIN
 
 }

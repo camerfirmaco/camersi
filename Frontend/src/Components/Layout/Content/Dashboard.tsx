@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DesktopOutlined,
   FileOutlined,
@@ -15,8 +15,9 @@ import { Breadcrumb, Layout, Menu, Avatar, Dropdown, Space, Button, Switch } fro
 import './../../../assets/css/Dashboard.css';
 import logoLight from './../../../assets/img/Logo-sin-fondo-blanco.png';
 import logoDark from './../../../assets/img/Logo-sin-fondo-black.png';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import TableGetSupport from '../../Support/TableGetSupport';
+import { SignUp, SingIn } from '../../../Service/Login/SignInData';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -37,15 +38,15 @@ function getItem(
 }
 
 const itemsMenu: MenuItem[] = [
-  getItem('Option 1', '1', <PieChartOutlined />),
-  getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
+  getItem('Home', '1', <PieChartOutlined />),
+  getItem('Administrador', '2', <DesktopOutlined />),
+  getItem('Usuarios', 'sub1', <UserOutlined />, [
     getItem('Tom', '3'),
     getItem('Bill', '4'),
     getItem('Alex', '5'),
   ]),
-  getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  getItem('Files', '9', <FileOutlined />),
+  getItem('Equipos', 'sub2', <TeamOutlined />, [getItem('Opereraciones', '6'), getItem('Soporte', '8')]),
+  getItem('Achivos', '9', <FileOutlined />),
 ]
 
 function getLink(to: string, name: string) {
@@ -59,17 +60,19 @@ const items: MenuProps['items'] = [
   { type: 'divider', },
   { key: '4', danger: true, label: getLink("/", "Cerrar Sesión"), icon: <LogoutOutlined /> },
 ];
-
-
 const Dashboard: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [tema, setTema] = useState<MenuTheme>('dark');
+  const [login, setLogin] = useState(true);
   const changeTheme = (value: boolean) => {
     setTema(value ? 'dark' : 'light');
   };
-
+  const signUp =()=>{
+    SignUp();
+  }
   return (
     <Layout className='layout-dashboard'>
+      
       {/* Sidebar */}
       <Sider theme={tema} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className='nav-dashboard' >
@@ -104,6 +107,7 @@ const Dashboard: React.FC = () => {
                 className='avatar-dashboard'
                 danger
                 type="primary"
+                onClick={()=>{ signUp(); setLogin(false)}}
                 icon={<PoweroffOutlined />}
               />
             </Space>
@@ -117,6 +121,7 @@ const Dashboard: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: 'center' }}>Camerfirma Colombia ©2023 Creado por Marcos :p</Footer>
+        {!login ?<Navigate to="/" replace />:<></>}
       </Layout>
     </Layout>
   );

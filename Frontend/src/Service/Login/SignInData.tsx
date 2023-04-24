@@ -1,44 +1,57 @@
-import { useState, useEffect } from 'react';
-import {Header, Url} from './../API/Header'
-import axios from 'axios';
+import Cookies from 'universal-cookie';
 
+const cookies = new Cookies();
 
-const SignInData: any = (url: string, body:any ) => {
-    const [data, setData] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(String);
-    const [controller, setController] = useState(new AbortController());
+const SaveSignIn = (response: any) => {
+  localStorage.setItem("token", response.data.token);
+  localStorage.setItem("user", response.data.user);
+  localStorage.setItem("vencimiento", response.data.vencimiento);
+  console.log("guardados");
+}
 
-    useEffect(() => {
-        
-        const ruta = Url(url);
-        const abortController = new AbortController();
-        setController(abortController);
-        const headers = Header(abortController.signal, body );
+const SignUp = () => {
+  if (localStorage.getItem('token')) {
+    localStorage.clear();
+    console.log("cierre de sesión");
+    return true
+  }
+  return false
+}
 
-        axios.post(ruta,headers)
-            .then((response) => response)
-            .then((json) => setData(json))
-            .catch((error) => {
-                if (error.name === "AbortError") {
-                    console.log("Cancelled request");
-                } else {
-                    setError(error);
-                }
-            })
-            .finally(() => setLoading(false));
+const SingIn = () => {
+  if (localStorage.getItem('token')){
+    console.log("Sesión guardada");
+    return true}
+  return false
+}
 
-        return () => abortController.abort();
-    }, []);
+const ForgotPassword = (response:any) =>{
+  cookies.set("keyforgot", response[0]);
+  cookies.set("userforgot", response[1]);
+  cookies.set("dateforgot", response[2]);
+  cookies.set("idforgot", response[3]);
+}
 
-    const handleCancelRequest = () => {
-        if (controller) {
-            controller.abort();
-            setError("Cancelled Request");
-        }
-    };
+const DataForgotPassword = ()=>{
+  return [cookies.get("keyforgot"),cookies.get("userforgot"),cookies.get("dateforgot"),cookies.get("idforgot") ];
+}
 
-    return { data, loading, error, handleCancelRequest };
-};
+const DeleteDataForgotPassword = ()=>{
+  cookies.remove("keyforgot");
+  cookies.remove("userforgot");
+  cookies.remove("dateforgot");
+  cookies.remove("idforgot");
+}
 
-export default SignInData;
+const ValideEmail = (key:any) =>{
+  cookies.set("keyvalide", key);
+}
+
+const KeyValideEmail = (pin:any) =>{
+  let key = cookies.get("keyvalide");
+  let body = [pin, key];
+  cookies.remove("keyvalide");
+  return body;
+}
+
+export {KeyValideEmail, ValideEmail, SaveSignIn, SingIn, SignUp, ForgotPassword, DataForgotPassword, DeleteDataForgotPassword}

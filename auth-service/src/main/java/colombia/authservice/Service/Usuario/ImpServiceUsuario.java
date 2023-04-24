@@ -1,6 +1,7 @@
 package colombia.authservice.Service.Usuario;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import colombia.authservice.Mapping.Cargo.DtoCreateCargo;
+import colombia.authservice.Mapping.Public.DtoNewPassword;
+import colombia.authservice.Mapping.Public.DtoPassword;
 import colombia.authservice.Mapping.Usuario.DtoCreateUsuario;
 import colombia.authservice.Mapping.Usuario.DtoUpdateAdmin;
 import colombia.authservice.Mapping.Usuario.DtoUpdateUsuario;
@@ -22,8 +25,11 @@ import colombia.authservice.Model.Cargo.InterfaceCargo;
 import colombia.authservice.Model.Cargo.InterfaceRole;
 import colombia.authservice.Model.Usuario.EntityUsuario;
 import colombia.authservice.Model.Usuario.InterfaceUsuario;
+import colombia.authservice.Service.Email.EnvioEmail;
 import colombia.authservice.Utils.EnumAcciones;
 import colombia.authservice.Utils.EnumRole;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
 
 @Service
 public class ImpServiceUsuario implements ServiceUsuario {
@@ -36,6 +42,9 @@ public class ImpServiceUsuario implements ServiceUsuario {
 
     @Autowired
     private InterfaceRole interfaceRole;
+
+    @Autowired
+    private EnvioEmail EnvioEmail;
 
     private PasswordEncoder password = new BCryptPasswordEncoder();
 
@@ -61,7 +70,8 @@ public class ImpServiceUsuario implements ServiceUsuario {
     private EntityUsuario createUsuario(DtoCreateUsuario DTO) {
         EntityUsuario entity = new EntityUsuario(DTO.getTipoDocumento(), DTO.getIdentificacion(), DTO.getEmail(),
                 DTO.getNombre(),
-                DTO.getPrimerApellido(), DTO.getSegundoApellido(), password.encode(DTO.getPassword()), DTO.getTelefono(),
+                DTO.getPrimerApellido(), DTO.getSegundoApellido(), password.encode(DTO.getPassword()),
+                DTO.getTelefono(),
                 DTO.getGenero(), false, false, false, false, false);
 
         return entity;
@@ -105,7 +115,7 @@ public class ImpServiceUsuario implements ServiceUsuario {
         return DTO;
     }
 
-    //CONSULTAR TODOS LOS USUARIOS
+    // CONSULTAR TODOS LOS USUARIOS
     @Override
     public List<DtoUsuario> listar() {
         List<EntityUsuario> lista = interfaceUsuario.findAll();
@@ -235,7 +245,7 @@ public class ImpServiceUsuario implements ServiceUsuario {
         return DTO;
     }
 
-    //ACTUALIZAR USUARIO
+    // ACTUALIZAR USUARIO
     @Override
     public DtoUsuario actualizar(String id, DtoUpdateAdmin usuario) {
         EntityUsuario entity = interfaceUsuario.findById(id).get();
@@ -301,5 +311,75 @@ public class ImpServiceUsuario implements ServiceUsuario {
         } else {
             return null;
         }
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // <---CONTRASEÑA---->//
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public String[] olvidoPasword(DtoPassword dto) throws AddressException, MessagingException {
+        Integer PIN = getNumberPin();
+        String correo = dto.getEmail();
+        String identificacion = dto.getIdentificacion();
+        if (!(correo == null)) {
+            EntityUsuario user = interfaceUsuario.findByEmail(dto.getEmail()).get();
+            String email = user.getEmail();
+                EnvioEmail.sendEmailPin(email,PIN.toString());
+            String respuesta = email.substring(0, email.indexOf("@") - 3).replaceAll("[a-z]", "*")
+                    + email.substring(email.indexOf("@") - 3, email.length());
+            String data[] = { password.encode(PIN.toString()), respuesta, new Date().toString(), user.getId() };
+            return data;
+        } else if (!(identificacion == null)) {
+            EntityUsuario user = interfaceUsuario.findByIdentificacion(dto.getIdentificacion()).get();
+            String email = user.getEmail();
+            EnvioEmail.sendEmailPin(email,PIN.toString());
+            String respuesta = email.substring(0, email.indexOf("@") - 3).replaceAll("[a-z]", "*")
+                    + email.substring(email.indexOf("@") - 3, email.length());
+            String data[] = { password.encode(PIN.toString()), respuesta, new Date().toString(), user.getId() };
+            return data;
+        }
+        return null;
+    }
+
+    private Integer getNumberPin() {
+        double fiveDigits = 100000 + Math.random() * 900000;
+        Integer PIN = (int) fiveDigits;
+        return PIN;
+    }
+
+    @Override
+    public Boolean newPasword(DtoNewPassword dto) {
+        if (password.matches(dto.getPin(),dto.getKey())) {
+            EntityUsuario user = interfaceUsuario.findById(dto.getId()).get();
+            user.setPassword(password.encode(dto.getPassword()));
+            interfaceUsuario.save(user);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String valideMail(String email) {
+        Integer PIN = getNumberPin();
+        try {
+            EnvioEmail.sendEmailPin(email,PIN.toString());
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return password.encode(PIN.toString());
+    }
+
+    @Override
+    public boolean valideMailKey(String[] valide) {
+        if(!(valide[0]==null) && !(valide[1]==null)){
+            if (password.matches(valide[0],valide[1])) {
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 }

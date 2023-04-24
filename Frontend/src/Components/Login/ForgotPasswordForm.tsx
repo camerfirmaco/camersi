@@ -1,17 +1,55 @@
 import React, { useState } from 'react';
 import { ArrowRightOutlined, MailOutlined, IdcardOutlined } from '@ant-design/icons';
-import { Button, InputNumber, Form, Input, Typography, Space, Switch } from 'antd';
+import { Button, InputNumber, Form, Input, Typography, Space, Switch, Alert } from 'antd';
 import './../../assets/css/ForgotPasswordForm.css';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { rutaApi } from '../../Service/API/Header';
+import axios from 'axios';
+import { ForgotPassword, DataForgotPassword } from '../../Service/Login/SignInData';
 
 const { Title } = Typography;
 
 const ForgotPasswordForm: React.FC = () => {
     const [input, setInput] = useState(false);
+    const [mensaje, setMensaje] = useState(String);
+    const [alert, setAlert] = useState(true);
+    const [forgot, setForgot] = useState(false);
     const onFinish = (values: any) => {
         console.log('Received values of form: ', values);
+        ForgotPasswordData(values);
     };
 
+    const alerta = () => {
+        return <Alert message={mensaje} type='error' showIcon />
+    }
+
+    const ForgotPasswordData = (values: Object) => {
+        axios.post(rutaApi + 'auth/password', values)
+            .then((response) => responder('response', response))
+            .catch((error) => responder('error', error));
+
+        const responder = (type: 'response' | 'error', response: any) => {
+            if (type === 'error') {
+                if (response.response.data.mensaje) {
+                    console.log(response.response.data)
+                    setMensaje('Usuario no encontrado');
+                    setAlert(false);
+                }
+                else if (response.code) {
+                    console.log(response.code)
+                    setMensaje('Servico caido ' + response.code);
+                    setAlert(false);
+                }
+            }
+            else {
+                setAlert(true);
+                ForgotPassword(response.data);
+                setForgot(true);
+            }
+        };
+        console.log('Enviado');
+
+    }
 
     return (
         <Form
@@ -62,7 +100,8 @@ const ForgotPasswordForm: React.FC = () => {
                     Enviar <ArrowRightOutlined />
                 </Button>
             </Form.Item>
-
+            {alert ? <></> : alerta()}
+            {forgot ? <Navigate to="valide" replace />: <></>}
         </Form>
 
     );
