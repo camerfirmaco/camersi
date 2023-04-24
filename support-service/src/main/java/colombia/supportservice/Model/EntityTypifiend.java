@@ -23,6 +23,9 @@ public class EntityTypifiend {
     // FECHA DE EMISIÓN DEL CERTIFICADO
     @Column(nullable = true)
     private String emision;
+    // DOCUMENTO DEL TITULAR DE LA FIRMA
+    @Column(nullable = true)
+    private String documento;
     // NOMBRE DEL TITULAR DE LA FIRMA
     @Column(nullable = true)
     private String nombre;
@@ -66,11 +69,12 @@ public class EntityTypifiend {
     @Column(nullable = true)
     private Boolean emilinado;
 
-    public EntityTypifiend(Long id, String emision, String nombre, String telefono, String company, String email,
-            String cetificado, String soporte, String fecha, String hora, String observacion, String estado,
-            String tiempo, String categoria, String agente, Boolean emilinado) {
+    public EntityTypifiend(Long id, String emision, String documento, String nombre, String telefono, String company,
+            String email, String cetificado, String soporte, String fecha, String hora, String observacion,
+            String estado, String tiempo, String categoria, String agente, Boolean emilinado) {
         this.id = id;
         this.emision = emision;
+        this.documento = documento;
         this.nombre = nombre;
         this.telefono = telefono;
         this.company = company;
