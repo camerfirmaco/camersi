@@ -36,8 +36,8 @@ spring:
         - id: support-service
           uri: lb://SUPPORT-SERVICE
           predicates:
-            - Path=/support/**
+            - Path=/**
         - id: operations-service
           uri: lb://OPERATIONS-SERVICE
           predicates:
-            - Path=/operations/**
+            - Path=/**

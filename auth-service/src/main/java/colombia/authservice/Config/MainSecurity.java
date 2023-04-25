@@ -36,12 +36,7 @@ public class MainSecurity {
                 .authorizeHttpRequests(authorize ->{
                         try {
                             authorize
-                            .requestMatchers("/auth/**").permitAll() // INGRESO PUBLICO
-                            // .requestMatchers("/admin/**").hasRole("ADMIN")
-                            // .requestMatchers("/db/**").access(new
-                            // WebExpressionAuthorizationManager("hasRole('ADMIN') and hasRole('DBA')"))
-                            // .requestMatchers("/db/**").access(AuthorizationManagers.allOf(AuthorityAuthorizationManager.hasRole("ADMIN"),
-                            // AuthorityAuthorizationManager.hasRole("DBA")))
+                            .requestMatchers("**").permitAll()
                             .anyRequest().authenticated().and()
                             .exceptionHandling(handling -> handling.authenticationEntryPoint(jwtEntryPoint))
                             .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
