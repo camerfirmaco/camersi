@@ -32,14 +32,11 @@ public class MainSecurity {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorize ->{
+        http.authorizeHttpRequests(authorize ->{
                         try {
                             authorize
-                            .requestMatchers("**").permitAll()
-                            .anyRequest().authenticated().and()
-                            .exceptionHandling(handling -> handling.authenticationEntryPoint(jwtEntryPoint))
-                            .addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+                            .anyRequest().permitAll()
+                            .anyRequest().authenticated().and();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
