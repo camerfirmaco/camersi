@@ -10,8 +10,6 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
-  server:
-    peer-node-read-timeout-ms: 1000
 
 spring:
   cloud:

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   DesktopOutlined,
   FileOutlined,
@@ -16,8 +16,8 @@ import './../../../assets/css/Dashboard.css';
 import logoLight from './../../../assets/img/Logo-sin-fondo-blanco.png';
 import logoDark from './../../../assets/img/Logo-sin-fondo-black.png';
 import { Link, Navigate } from 'react-router-dom';
-import TableGetSupport from '../../Support/TableGetSupport';
-import { SignUp, SingIn } from '../../../Service/Login/SignInData';
+import { SignUp,  } from '../../../Service/Login/SignInData';
+import TableGetSupport from './../../Support/TableGetSupport';
 
 const { Header, Content, Footer, Sider } = Layout;
 

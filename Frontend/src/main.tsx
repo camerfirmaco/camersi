@@ -9,7 +9,9 @@ import ForgotPasswordForm from './Components/Login/ForgotPasswordForm'
 import BasePassword from './Components/Login/BasePassword'
 import EmailSent from './Components/Login/EmailSent'
 import Dashboard from './Components/Layout/Content/Dashboard'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -42,6 +44,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
     <RouterProvider router={router}/>
+    </QueryClientProvider>
   </React.StrictMode>,
 )

@@ -1,7 +1,8 @@
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 
 const useGetUsers: any = (url: string) => {
-    const [data, setData] = useState(null);
+    const [datas, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(String);
     const [controller, setController] = useState(new AbortController());
@@ -10,9 +11,8 @@ const useGetUsers: any = (url: string) => {
         const abortController = new AbortController();
         setController(abortController);
 
-        fetch(url, { signal: abortController.signal })
-            .then((response) => response.json())
-            .then((json) => setData(json))
+        axios.get(url, { signal: abortController.signal })
+            .then((response) => setData(response.data))
             .catch((error) => {
                 if (error.name === "AbortError") {
                     console.log("Cancelled request");
@@ -32,7 +32,7 @@ const useGetUsers: any = (url: string) => {
         }
     };
 
-    return { data, loading, error, handleCancelRequest };
+    return { datas, loading, error, handleCancelRequest };
 };
 
 export default useGetUsers;
