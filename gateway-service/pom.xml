@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.0.5</version>
+		<version>3.0.6</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>colombia</groupId>
@@ -33,7 +33,8 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-bootstrap</artifactId>
 		</dependency>
-		<dependency>
+		<!--~~(org.springframework.boot:spring-boot-starter-webflux:3.0.6 failed. Unable to download POM. Tried repositories:
+https://repo.maven.apache.org/maven2: java.net.SocketTimeoutException: Connect timed out)~~>--><dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway</artifactId>
 		</dependency>

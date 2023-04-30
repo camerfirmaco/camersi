@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import colombia.authservice.Mapping.Cargo.DtoCreateCargo;
 import colombia.authservice.Mapping.Public.DtoNewPassword;
 import colombia.authservice.Mapping.Public.DtoPassword;
+import colombia.authservice.Mapping.Public.RequestDto;
+import colombia.authservice.Mapping.Public.TokenDto;
 import colombia.authservice.Mapping.Usuario.DtoCreateUsuario;
 import colombia.authservice.Mapping.Usuario.DtoUpdateAdmin;
 import colombia.authservice.Mapping.Usuario.DtoUpdateUsuario;
@@ -25,6 +27,7 @@ import colombia.authservice.Model.Cargo.InterfaceCargo;
 import colombia.authservice.Model.Cargo.InterfaceRole;
 import colombia.authservice.Model.Usuario.EntityUsuario;
 import colombia.authservice.Model.Usuario.InterfaceUsuario;
+import colombia.authservice.Security.jwt.JwtProvider;
 import colombia.authservice.Service.Email.EnvioEmail;
 import colombia.authservice.Utils.EnumAcciones;
 import colombia.authservice.Utils.EnumRole;
@@ -45,6 +48,9 @@ public class ImpServiceUsuario implements ServiceUsuario {
 
     @Autowired
     private EnvioEmail EnvioEmail;
+
+    @Autowired
+    JwtProvider jwtProvider;
 
     private PasswordEncoder password = new BCryptPasswordEncoder();
 
@@ -381,5 +387,14 @@ public class ImpServiceUsuario implements ServiceUsuario {
             return false;
         }
         return false;
+    }
+
+    public TokenDto validateToken(String token, RequestDto dto) {
+        if(!jwtProvider.validateToken(token)) // FALTA RUTA!
+            return null;
+        String username = jwtProvider.getUserNameFromToken(token);
+        if(!interfaceUsuario.findByEmail(username).isPresent())
+            return null;
+        return new TokenDto(token);
     }
 }

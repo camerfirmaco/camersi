@@ -75,8 +75,6 @@ const App: React.FC = () => {
           pagination: {
             ...tableParams.pagination,
             total: 200,
-            // 200 is mock data, you should read it from server
-            // total: data.totalCount,
           },
         });
       });
@@ -85,23 +83,6 @@ const App: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, [JSON.stringify(tableParams)]);
-
-  const handleTableChange = (
-    pagination: TablePaginationConfig,
-    filters: Record<string, FilterValue>,
-    sorter: SorterResult<DataType>,
-  ) => {
-    setTableParams({
-      pagination,
-      filters,
-      ...sorter,
-    });
-
-    // `dataSource` is useless since `pageSize` changed
-    if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-      setData([]);
-    }
-  };
 
   return (
     <Table

@@ -7,6 +7,8 @@ import colombia.authservice.Mapping.Public.DtoJwt;
 import colombia.authservice.Mapping.Public.DtoLogin;
 import colombia.authservice.Mapping.Public.DtoNewPassword;
 import colombia.authservice.Mapping.Public.DtoPassword;
+import colombia.authservice.Mapping.Public.RequestDto;
+import colombia.authservice.Mapping.Public.TokenDto;
 import colombia.authservice.Mapping.Usuario.DtoCreateUsuario;
 import colombia.authservice.Messages.Global.MessageDetails;
 import colombia.authservice.Security.jwt.JwtProvider;
@@ -27,7 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/auth")
@@ -64,13 +66,15 @@ public class ControllerAuth {
         }
     }
 
-    @PostMapping(value = "/validate")
-    public ResponseEntity<?> postMethodName() {
-
-        return ResponseEntity.accepted().body(new MessageDetails(HttpStatus.ACCEPTED, EnumOperacion.TOKEN, new Date(),
-                "Token aceptado, procede a ruta", null));
+    @PostMapping("/validate")
+    public ResponseEntity<TokenDto> validate(@RequestParam String token, @RequestBody RequestDto dto) {
+        TokenDto tokenDto = impUsuario.validateToken(token, dto);
+        if (tokenDto == null)
+            return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(tokenDto);
     }
 
+    // ENVIO DE CORREO PARA RESTABLECER CONTRASEÑA
     @PostMapping(value = "/password")
     public ResponseEntity<?> password(@RequestBody DtoPassword dtoPassword) {
         try {
@@ -87,6 +91,7 @@ public class ControllerAuth {
         }
     }
 
+    // NUEVA CONTRASEÑA
     @PostMapping(value = "/password/new")
     public ResponseEntity<?> passwordNew(@Valid @RequestBody DtoNewPassword dtoPassword) {
         try {
@@ -135,7 +140,7 @@ public class ControllerAuth {
 
     // VALIDAR EMAIL
     @PostMapping(value = "/email/valide")
-    public ResponseEntity<?> valideEmailKey(@NotNull @RequestBody String[] valide ) {
+    public ResponseEntity<?> valideEmailKey(@NotNull @RequestBody String[] valide) {
         try {
             return ResponseEntity.ok().body(impUsuario.valideMailKey(valide));
         } catch (Exception e) {

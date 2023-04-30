@@ -1,6 +1,9 @@
 package colombia.authservice.Security.jwt;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +44,14 @@ public class JwtProvider {
         // MENSAJE EN CONSOLA CON EL USERNAME DEL USUARIO
         logger.error(mainUser.getUsername());
 
+        Map<String, Object> claims = new HashMap<>();
+        claims = Jwts.claims().setSubject(mainUser.getUsername());
+        claims.put("role", mainUser.getAuthorities().toArray());
+
         // CREACIÓN DE JWT RETORNO
         return Jwts.builder().setSubject(mainUser.getUsername()) // ASIGNACIÓN DE JWT - USERNAME
                 .setIssuedAt(new Date()) // ASIGNACIÓN DE JWT - FECHA DE EMISIÓN
+                .setClaims(claims)// AGREGAR LOS ROLES EN UN ARRAY
                 .setExpiration(new Date(new Date().getTime() + expiration * 1000)) // ASIGNACIÓN DE JWT - EXPIRACIÓN
                 .signWith(SignatureAlgorithm.HS512, secret) // ASIGNACIÓN DE JWT - FIRMA
                 .compact();
