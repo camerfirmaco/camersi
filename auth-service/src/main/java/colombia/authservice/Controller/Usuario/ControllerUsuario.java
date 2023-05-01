@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import colombia.authservice.Mapping.Cargo.DtoCreateCargo;
+import colombia.authservice.Mapping.Usuario.DtoAgenteSupport;
+import colombia.authservice.Mapping.Usuario.DtoAsignacion;
 import colombia.authservice.Mapping.Usuario.DtoCreateUsuario;
 import colombia.authservice.Mapping.Usuario.DtoUpdateAdmin;
 import colombia.authservice.Mapping.Usuario.DtoUpdateUsuario;
@@ -11,12 +13,10 @@ import colombia.authservice.Mapping.Usuario.DtoUsuario;
 import colombia.authservice.Messages.Global.MessageDetails;
 import colombia.authservice.Service.Usuario.ImpServiceUsuario;
 import colombia.authservice.Utils.EnumOperacion;
-import colombia.authservice.Utils.EnumRole;
 import jakarta.validation.Valid;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +29,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
 @RestController
 @Validated
-@RequestMapping("/usuario")
+@RequestMapping("/users")
 public class ControllerUsuario {
 
     // INYECCIÓN DE LA IMPLEMENTACIÓN DEL SERVICIO USUARIO
@@ -64,15 +63,17 @@ public class ControllerUsuario {
                             "Usuario no encontrado", e.getMessage()));
         }
     }
-    //EDITAR PERFIL
+
+    // EDITAR PERFIL
     @PutMapping("/{id}")
     public ResponseEntity<?> editarPerfil(@PathVariable String id, @RequestBody DtoUpdateUsuario DTO) {
         try {
             if (impUsuario.consultarId(id).isPresent()) {
                 return ResponseEntity.ok(impUsuario.editar(id, DTO));
             } else {
-                return ResponseEntity.unprocessableEntity().body(new MessageDetails(HttpStatus.UNPROCESSABLE_ENTITY, EnumOperacion.EDITAR,
-                        new Date(), "Usuario no existente", null));
+                return ResponseEntity.unprocessableEntity()
+                        .body(new MessageDetails(HttpStatus.UNPROCESSABLE_ENTITY, EnumOperacion.EDITAR,
+                                new Date(), "Usuario no existente", null));
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
@@ -81,15 +82,16 @@ public class ControllerUsuario {
         }
     }
 
-    //EDITAR PERFIL
+    // ACTUALIZAR
     @PutMapping("/all/{id}")
     public ResponseEntity<?> actualizar(@PathVariable String id, @RequestBody DtoUpdateAdmin DTO) {
         try {
             if (impUsuario.consultarId(id).isPresent()) {
                 return ResponseEntity.ok(impUsuario.actualizar(id, DTO));
             } else {
-                return ResponseEntity.unprocessableEntity().body(new MessageDetails(HttpStatus.UNPROCESSABLE_ENTITY, EnumOperacion.EDITAR,
-                        new Date(), "Usuario no existente", null));
+                return ResponseEntity.unprocessableEntity()
+                        .body(new MessageDetails(HttpStatus.UNPROCESSABLE_ENTITY, EnumOperacion.EDITAR,
+                                new Date(), "Usuario no existente", null));
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
@@ -98,7 +100,7 @@ public class ControllerUsuario {
         }
     }
 
-    //GUARDAR USUARIO
+    // GUARDAR USUARIO
     @PostMapping
     public ResponseEntity<?> guardar(@Valid @RequestBody DtoCreateUsuario DTO) {
         try {
@@ -115,15 +117,17 @@ public class ControllerUsuario {
         }
 
     }
-    //ASIGNACION DE ROLES
-    @PutMapping(value="role/{id}")
-    public ResponseEntity<?> asignacion(@PathVariable String id, @RequestBody List<EnumRole> roles) {
+
+    // ASIGNACION DE ROLES
+    @PutMapping(value = "role/{id}")
+    public ResponseEntity<?> asignacion(@PathVariable String id, @RequestBody DtoAsignacion asignacion) {
         try {
             if (impUsuario.consultarId(id).isPresent()) {
-                return ResponseEntity.ok(impUsuario.asignacion(id, roles));
+                return ResponseEntity.ok(impUsuario.asignacion(id, asignacion));
             } else {
-                return ResponseEntity.unprocessableEntity().body(new MessageDetails(HttpStatus.UNPROCESSABLE_ENTITY, EnumOperacion.GUARDAR,
-                        new Date(), "Usuario no existente", null));
+                return ResponseEntity.unprocessableEntity()
+                        .body(new MessageDetails(HttpStatus.UNPROCESSABLE_ENTITY, EnumOperacion.GUARDAR,
+                                new Date(), "Usuario no existente", null));
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
@@ -136,7 +140,7 @@ public class ControllerUsuario {
     // <---CARGO---->//
     /////////////////////////////////////////////////////////////////////////////////////////////
 
-    //REGISTRO DE CARGO
+    // REGISTRO DE CARGO
     @PostMapping("/cargo")
     public ResponseEntity<?> guardarCargo(@Valid @RequestBody DtoCreateCargo DTO) {
         try {
@@ -153,6 +157,19 @@ public class ControllerUsuario {
             return ResponseEntity.internalServerError()
                     .body(new MessageDetails(HttpStatus.INTERNAL_SERVER_ERROR, EnumOperacion.GUARDAR, new Date(),
                             "Cargo no registrado", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/support/{id}")
+    public ResponseEntity<DtoAgenteSupport> getAgentSupport(@PathVariable("id") String id) {
+        try {
+            DtoUsuario user = impUsuario.consultarId(id).get();
+            if (user != null)
+                return ResponseEntity.ok()
+                        .body(new DtoAgenteSupport(user.getId(), user.getNombre() + " " + user.getPrimerApellido()));
+            return ResponseEntity.internalServerError().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(null);
         }
     }
 

@@ -1,15 +1,16 @@
-package colombia.authservice.Security.Router;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+package colombia.authservice.Router;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
-@Component
-@ConfigurationProperties(prefix = "admin-paths")
-public class RouterAdminValidator {
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
+import colombia.authservice.Mapping.Public.RequestDto;
+
+@Component
+@ConfigurationProperties(prefix = "user-admin-paths")
+public class RouterUserAdmin {
     private List<RequestDto> paths;
 
     public List<RequestDto> getPaths() {
@@ -20,7 +21,7 @@ public class RouterAdminValidator {
         this.paths = paths;
     }
 
-    public boolean isAdminPath(RequestDto dto) {
+    public boolean isPath(RequestDto dto) {
         return paths.stream().anyMatch(p ->
                 Pattern.matches(p.getUri(), dto.getUri()) && p.getMethod().equals(dto.getMethod()));
     }

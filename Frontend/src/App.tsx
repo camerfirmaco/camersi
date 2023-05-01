@@ -1,97 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import './index.css';
-import { Table } from 'antd';
-import type { ColumnsType, TablePaginationConfig } from 'antd/es/table';
-import type { FilterValue, SorterResult } from 'antd/es/table/interface';
-import qs from 'qs';
-
-interface DataType {
-  name: {
-    first: string;
-    last: string;
-  };
-  gender: string;
-  email: string;
-  login: {
-    uuid: string;
-  };
-}
-
-interface TableParams {
-  pagination?: TablePaginationConfig;
-  sortField?: string;
-  sortOrder?: string;
-  filters?: Record<string, FilterValue>;
-}
-
-const columns: ColumnsType<DataType> = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    sorter: true,
-    render: (name) => `${name.first} ${name.last}`,
-    width: '20%',
-  },
-  {
-    title: 'Gender',
-    dataIndex: 'gender',
-    filters: [
-      { text: 'Male', value: 'male' },
-      { text: 'Female', value: 'female' },
-    ],
-    width: '20%',
-  },
-  {
-    title: 'Email',
-    dataIndex: 'email',
-  },
-];
-
-const getRandomuserParams = (params: TableParams) => ({
-  results: params.pagination?.pageSize,
-  page: params.pagination?.current,
-  ...params,
-});
-
+import * as XLSX from 'xlsx';
 const App: React.FC = () => {
-  const [data, setData] = useState<DataType[]>();
-  const [loading, setLoading] = useState(false);
-  const [tableParams, setTableParams] = useState<TableParams>({
-    pagination: {
-      current: 1,
-      pageSize: 10,
-    },
-  });
 
-  const fetchData = () => {
-    setLoading(true);
-    fetch(`https://randomuser.me/api?${qs.stringify(getRandomuserParams(tableParams))}`)
-      .then((res) => res.json())
-      .then(({ results }) => {
-        setData(results);
-        setLoading(false);
-        setTableParams({
-          ...tableParams,
-          pagination: {
-            ...tableParams.pagination,
-            total: 200,
-          },
-        });
-      });
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [JSON.stringify(tableParams)]);
+  const readUploadFile = (e: any) => {
+    e.preventDefault();
+    if (e.target.files) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = e.target?.result;
+        const workbook = XLSX.read(data);
+        const array: Object[] = [];
+        for (let index = 0; index <= 2; index++) {
+          const worksheet = workbook.Sheets[workbook.SheetNames[index]];
+          const json = XLSX.utils.sheet_to_json(worksheet);
+          if (index === 0)
+            array.push({ TOKEN: json });
+          if (index === 1)
+            array.push({ CKC: json });
+          if (index === 2)
+            array.push({ TOP: json });
+        }
+        console.log(array);
+      };
+      reader.readAsArrayBuffer(e.target.files[0]);
+    }
+  }
 
   return (
-    <Table
-      columns={columns}
-      rowKey={(record) => record.login.uuid}
-      dataSource={data}
-      pagination={tableParams.pagination}
-      loading={loading}
-    />
+    <form>
+      <label htmlFor="upload">Upload File</label>
+      <input
+        type="file"
+        name="upload"
+        id="upload"
+        onChange={readUploadFile}
+      />
+    </form>
   );
 };
 

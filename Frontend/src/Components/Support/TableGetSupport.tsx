@@ -118,7 +118,8 @@ const TableGetSupport: React.FC = () => {
         expandedRowRender: (record) => <>{descripcion(record)}</>,
         rowExpandable: () => true,
       }}
-      loading={loading}
+      loading={true}
+      
       footer={() => 'Footer'}
       dataSource={data}
       summary={() => (

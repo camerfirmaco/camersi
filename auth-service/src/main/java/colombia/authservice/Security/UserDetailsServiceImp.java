@@ -38,9 +38,6 @@ public class UserDetailsServiceImp implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (EntityRole role : roles) {
             String name = role.getRole().toString().toUpperCase();
-            if (!name.startsWith("ROLE_")) {
-                name = "ROLE_" + name;
-            }
             authorities.add(new SimpleGrantedAuthority(name));
         }
         return authorities;

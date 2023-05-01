@@ -8,16 +8,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import colombia.authservice.Security.jwt.JwtTokenFilter;
-
 
 @Configuration
 @EnableWebSecurity
 public class MainSecurity {
-    @Bean
-    JwtTokenFilter jwtTokenFilter() {
-        return new JwtTokenFilter();
-    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -29,8 +23,7 @@ public class MainSecurity {
         http.authorizeHttpRequests(authorize ->{
                         try {
                             authorize
-                            .anyRequest().permitAll()
-                            .anyRequest().authenticated().and();
+                            .anyRequest().permitAll();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -1,7 +1,7 @@
 package colombia.authservice.Service.Usuario;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -13,10 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import colombia.authservice.Mapping.Cargo.DtoCreateCargo;
-import colombia.authservice.Mapping.Public.DtoNewPassword;
-import colombia.authservice.Mapping.Public.DtoPassword;
-import colombia.authservice.Mapping.Public.RequestDto;
-import colombia.authservice.Mapping.Public.TokenDto;
+import colombia.authservice.Mapping.Usuario.DtoAcciones;
+import colombia.authservice.Mapping.Usuario.DtoAsignacion;
+import colombia.authservice.Mapping.Usuario.DtoCreateAdmin;
 import colombia.authservice.Mapping.Usuario.DtoCreateUsuario;
 import colombia.authservice.Mapping.Usuario.DtoUpdateAdmin;
 import colombia.authservice.Mapping.Usuario.DtoUpdateUsuario;
@@ -27,12 +26,10 @@ import colombia.authservice.Model.Cargo.InterfaceCargo;
 import colombia.authservice.Model.Cargo.InterfaceRole;
 import colombia.authservice.Model.Usuario.EntityUsuario;
 import colombia.authservice.Model.Usuario.InterfaceUsuario;
-import colombia.authservice.Security.jwt.JwtProvider;
-import colombia.authservice.Service.Email.EnvioEmail;
-import colombia.authservice.Utils.EnumAcciones;
 import colombia.authservice.Utils.EnumRole;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.AddressException;
+import colombia.authservice.Service.Email.EnvioEmail;
 
 @Service
 public class ImpServiceUsuario implements ServiceUsuario {
@@ -48,9 +45,6 @@ public class ImpServiceUsuario implements ServiceUsuario {
 
     @Autowired
     private EnvioEmail EnvioEmail;
-
-    @Autowired
-    JwtProvider jwtProvider;
 
     private PasswordEncoder password = new BCryptPasswordEncoder();
 
@@ -78,7 +72,7 @@ public class ImpServiceUsuario implements ServiceUsuario {
                 DTO.getNombre(),
                 DTO.getPrimerApellido(), DTO.getSegundoApellido(), password.encode(DTO.getPassword()),
                 DTO.getTelefono(),
-                DTO.getGenero(), false, false, false, false, false);
+                DTO.getGenero(), false, false, false, true, false);
 
         return entity;
 
@@ -145,59 +139,26 @@ public class ImpServiceUsuario implements ServiceUsuario {
 
     // MODIFICAR ACCIONES DEL USUARIO
     @Override
-    public Boolean accion(String id, EnumAcciones accion) {
+    public DtoAcciones editarAccion(String id, DtoAcciones accion) {
         if (consultarId(id).isPresent()) {
             EntityUsuario usuario = interfaceUsuario.getReferenceById(id);
-            EntityUsuario guardado = new EntityUsuario();
-            switch (accion) {
-                case ACTIVADO:
-                    usuario.setActivo(!usuario.getActivo());
-                    guardado = interfaceUsuario.save(usuario);
-                    return guardado.getActivo();
-                case HABILITADO:
-                    usuario.setHabilitado(!usuario.getHabilitado());
-                    guardado = interfaceUsuario.save(usuario);
-                    return guardado.getHabilitado();
-                case BLOQUEADO:
-                    usuario.setBloqueado(!usuario.getBloqueado());
-                    guardado = interfaceUsuario.save(usuario);
-                    return guardado.getBloqueado();
-                case EMAIL:
-                    usuario.setVerificarEmail(!usuario.getVerificarEmail());
-                    guardado = interfaceUsuario.save(usuario);
-                    return guardado.getVerificarEmail();
-                case TELEFONO:
-                    usuario.setVerificarTelefono(!usuario.getVerificarTelefono());
-                    guardado = interfaceUsuario.save(usuario);
-                    return guardado.getVerificarTelefono();
-                default:
-                    return null;
-            }
-
+            usuario.setActivo(accion.isACTIVADO());
+            usuario.setBloqueado(accion.isBLOQUEADO());
+            usuario.setHabilitado(accion.isBLOQUEADO());
+            usuario.setRoles(entityRoles(accion.getRoles()));
+            interfaceUsuario.save(usuario);
+            return accion;
         }
         return null;
     }
 
     // CONSULTAR ACCIONES DEL USUARIO
     @Override
-    public Boolean consultarAccion(String id, EnumAcciones accion) {
+    public DtoAcciones consultarAccion(String id) {
         if (consultarId(id).isPresent()) {
             EntityUsuario usuario = interfaceUsuario.getReferenceById(id);
-            switch (accion) {
-                case ACTIVADO:
-                    return usuario.getActivo();
-                case HABILITADO:
-                    return usuario.getHabilitado();
-                case BLOQUEADO:
-                    return usuario.getBloqueado();
-                case EMAIL:
-                    return usuario.getVerificarEmail();
-                case TELEFONO:
-                    return usuario.getVerificarTelefono();
-                default:
-                    return null;
-            }
-
+            return new DtoAcciones(usuario.getActivo(), usuario.getHabilitado(), usuario.getBloqueado(),
+                    usuario.getVerificarEmail(), usuario.getVerificarTelefono(), EnumRoles(usuario.getRoles()));
         }
         return null;
     }
@@ -214,26 +175,48 @@ public class ImpServiceUsuario implements ServiceUsuario {
         }
     }
 
-    // ASIGNACION DE ROLES
-    @Override
-    public List<EnumRole> asignacion(String id, List<EnumRole> roles) {
-
+    // DE ENTITY A ENUM
+    private List<EntityRole> entityRoles(List<EnumRole> roles){
         List<EntityRole> role = new ArrayList<EntityRole>();
         if (roles.isEmpty()) {
-            Optional<EntityUsuario> usuario = interfaceUsuario.findById(id);
-            usuario.get().setRoles(role);
-            interfaceUsuario.save(usuario.get());
-            return roles;
+            return null;
         } else {
             Iterator<EnumRole> i = roles.iterator();
             while (i.hasNext()) {
                 role.add(interfaceRole.findByRole(i.next()));
             }
+            return role;
+        }
+    }
+    
+    // DE ENTITY A ENUM
+    private List<EnumRole> EnumRoles(List<EntityRole> roles){
+        List<EnumRole> role = new ArrayList<EnumRole>();
+        if (roles.isEmpty()) {
+            return null;
+        } else {
+            Iterator<EntityRole> i = roles.iterator();
+            while (i.hasNext()) {
+                EntityRole rol = i.next();
+                role.add(rol.getRole());
+            }
+            return role;
+        }
+    }
+    
+    // ASIGNACION DE ROLES
+    @Override
+    public List<EnumRole> asignacion(String id, DtoAsignacion asignacion) {
+        List<EntityRole> role = entityRoles(asignacion.getRoles());
+        EntityCargo cargo = interfaceCargo.findByCargo(asignacion.getCargo()).get();
             Optional<EntityUsuario> usuario = interfaceUsuario.findById(id);
             usuario.get().setRoles(role);
+            usuario.get().setActivo(true);
+            usuario.get().setHabilitado(true);
+            usuario.get().setBloqueado(true);
+            usuario.get().setCargo(cargo);
             interfaceUsuario.save(usuario.get());
-        }
-        return roles;
+        return asignacion.getRoles();
     }
 
     // EDITAR PERFIL
@@ -243,6 +226,7 @@ public class ImpServiceUsuario implements ServiceUsuario {
         entity.setNombre(usuario.getNombre());
         entity.setPrimerApellido(usuario.getPrimerApellido());
         entity.setSegundoApellido(usuario.getSegundoApellido());
+        entity.setEmail(usuario.getEmail());
         entity.setTelefono(usuario.getTelefono());
         entity.setGenero(usuario.getGenero());
         entity.setImagen(usuario.getImagen());
@@ -258,6 +242,7 @@ public class ImpServiceUsuario implements ServiceUsuario {
         entity.setTipoDocumento(usuario.getTipoDocumento());
         entity.setIdentificacion(usuario.getIdentificacion());
         entity.setNombre(usuario.getNombre());
+        entity.setEmail(usuario.getEmail());
         entity.setPrimerApellido(usuario.getPrimerApellido());
         entity.setSegundoApellido(usuario.getSegundoApellido());
         entity.setTelefono(usuario.getTelefono());
@@ -270,6 +255,57 @@ public class ImpServiceUsuario implements ServiceUsuario {
         return DTO;
     }
 
+    // CONSULTAR USUARIOS SIN ASIGNACION
+    @Override
+    public List<DtoUsuario> listarSinAsignacion() {
+        List<EntityUsuario> lista = interfaceUsuario.findAll();
+        Iterator<EntityUsuario> i = lista.iterator();
+        List<DtoUsuario> Dtos = new ArrayList<DtoUsuario>();
+        while (i.hasNext()) {
+            EntityUsuario usuario = i.next();
+            if (usuario.getRoles() != null && usuario.getCargo() != null)
+                Dtos.add(entityUsuario(usuario));
+        }
+        return Dtos;
+    }
+
+    // REGISTRAR USUARIO COMO ADMINISTRADOR
+    @Override
+    public DtoUsuario guardarAdmin(DtoCreateAdmin usuario) throws AddressException, MessagingException {
+        // CREAR CONTRASEÑA
+        String passwordString = generateRandomPassword();
+        // ENVIAR CORREO CON CREDENCIALES
+        EnvioEmail.sendEmailPassword(usuario.getEmail(), passwordString);
+        // LISTA DE EMUM DE ROLES
+        List<EnumRole> roles = usuario.getRoles();
+        // BUSQUEDA DE CARGO PARA CREACION
+        EntityCargo cargo = interfaceCargo.findByCargo(usuario.getCargo()).get();
+        // ROLES FINALES PARA REGISTRO
+        List<EntityRole> role = new ArrayList<EntityRole>();
+        Iterator<EnumRole> i = roles.iterator();
+        while (i.hasNext()) {
+            role.add(interfaceRole.findByRole(i.next()));
+        }
+
+        EntityUsuario user = new EntityUsuario(usuario.getTipoDocumento(), usuario.getIdentificacion(),
+                usuario.getEmail(), usuario.getEmail(), usuario.getNombre(), usuario.getSegundoApellido(),
+                password.encode(passwordString),
+                usuario.getTelefono(), usuario.getGenero(), true, true, true, true, false, cargo, role);
+        DtoUsuario DTO = entityUsuario(interfaceUsuario.save(user));
+        return DTO;
+    }
+
+    // CREAR CONTRASEÑA RANDOM
+    private String generateRandomPassword() {
+        final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 12; i++) {
+            int randomIndex = random.nextInt(chars.length());
+            sb.append(chars.charAt(randomIndex));
+        }
+        return sb.toString();
+    }
     //////////////////////////////////////////////////////////////////////////////////////////////
     // <---CARGO---->//
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,7 +342,7 @@ public class ImpServiceUsuario implements ServiceUsuario {
         }
     }
 
-    // CAMBIO DE ESTADO DEL CARGO
+    // CAMBIO DE ESTADO DEL CARGO ELIMINADO
     @Override
     public Boolean estadoCargo(String cargo) {
         Optional<EntityCargo> entity = interfaceCargo.findByCargo(cargo);
@@ -319,82 +355,17 @@ public class ImpServiceUsuario implements ServiceUsuario {
         }
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    // <---CONTRASEÑA---->//
-    /////////////////////////////////////////////////////////////////////////////////////////////
-
     @Override
-    public String[] olvidoPasword(DtoPassword dto) throws AddressException, MessagingException {
-        Integer PIN = getNumberPin();
-        String correo = dto.getEmail();
-        String identificacion = dto.getIdentificacion();
-        if (!(correo == null)) {
-            EntityUsuario user = interfaceUsuario.findByEmail(dto.getEmail()).get();
-            String email = user.getEmail();
-                EnvioEmail.sendEmailPin(email,PIN.toString());
-            String respuesta = email.substring(0, email.indexOf("@") - 3).replaceAll("[a-z]", "*")
-                    + email.substring(email.indexOf("@") - 3, email.length());
-            String data[] = { password.encode(PIN.toString()), respuesta, new Date().toString(), user.getId() };
-            return data;
-        } else if (!(identificacion == null)) {
-            EntityUsuario user = interfaceUsuario.findByIdentificacion(dto.getIdentificacion()).get();
-            String email = user.getEmail();
-            EnvioEmail.sendEmailPin(email,PIN.toString());
-            String respuesta = email.substring(0, email.indexOf("@") - 3).replaceAll("[a-z]", "*")
-                    + email.substring(email.indexOf("@") - 3, email.length());
-            String data[] = { password.encode(PIN.toString()), respuesta, new Date().toString(), user.getId() };
-            return data;
+    public List<EntityCargo> listarCargo() {
+        List<EntityCargo> lista = interfaceCargo.findAll();
+        Iterator<EntityCargo> i = lista.iterator();
+        List<EntityCargo> list = new ArrayList<EntityCargo>();
+        while (i.hasNext()) {
+            EntityCargo cargo = i.next();
+            if (!cargo.getEstado())
+                list.add(cargo);
         }
-        return null;
+        return list;
     }
 
-    private Integer getNumberPin() {
-        double fiveDigits = 100000 + Math.random() * 900000;
-        Integer PIN = (int) fiveDigits;
-        return PIN;
-    }
-
-    @Override
-    public Boolean newPasword(DtoNewPassword dto) {
-        if (password.matches(dto.getPin(),dto.getKey())) {
-            EntityUsuario user = interfaceUsuario.findById(dto.getId()).get();
-            user.setPassword(password.encode(dto.getPassword()));
-            interfaceUsuario.save(user);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public String valideMail(String email) {
-        Integer PIN = getNumberPin();
-        try {
-            EnvioEmail.sendEmailPin(email,PIN.toString());
-        } catch (AddressException e) {
-            e.printStackTrace();
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-        return password.encode(PIN.toString());
-    }
-
-    @Override
-    public boolean valideMailKey(String[] valide) {
-        if(!(valide[0]==null) && !(valide[1]==null)){
-            if (password.matches(valide[0],valide[1])) {
-                return true;
-            }
-            return false;
-        }
-        return false;
-    }
-
-    public TokenDto validateToken(String token, RequestDto dto) {
-        if(!jwtProvider.validateToken(token)) // FALTA RUTA!
-            return null;
-        String username = jwtProvider.getUserNameFromToken(token);
-        if(!interfaceUsuario.findByEmail(username).isPresent())
-            return null;
-        return new TokenDto(token);
-    }
 }

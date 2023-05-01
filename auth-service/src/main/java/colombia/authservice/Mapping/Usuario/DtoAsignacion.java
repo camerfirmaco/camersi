@@ -3,7 +3,6 @@ package colombia.authservice.Mapping.Usuario;
 import java.util.List;
 
 import colombia.authservice.Utils.EnumRole;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,16 +12,12 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 public class DtoAsignacion {
-
-    @NotNull
     private List<EnumRole> roles;
-
-    @NotNull
-    private Integer cargo;
-
-    public DtoAsignacion(@NotNull List<EnumRole> roles, @NotNull Integer cargo) {
+    private String cargo;
+    public DtoAsignacion(List<EnumRole> roles, String cargo) {
         this.roles = roles;
         this.cargo = cargo;
     }
+    
     
 }

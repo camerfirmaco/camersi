@@ -2,24 +2,31 @@ package colombia.supportservice.Service;
 
 import java.util.List;
 
+import colombia.supportservice.Mapping.DtoAgentSupport;
+import colombia.supportservice.Mapping.DtoAllTypifiend;
+import colombia.supportservice.Mapping.DtoCreateUpdateTypifiend;
+import colombia.supportservice.Mapping.DtoPending;
 import colombia.supportservice.Model.EntityTypifiend;
 
 public interface ServiceTypifiend {
 
-    EntityTypifiend consultarId(String id); // CONSULTAR POR ID
+    List<DtoAllTypifiend> consultarUsuario(String usuario); // CONSULTAR POR USUARIO
 
-    List<EntityTypifiend> consultarUsuario(String usuario); // CONSULTAR POR USUARIO
+    DtoAgentSupport consultarAgente(String agente); // CONSULTAR POR AGENTE
 
-    List<EntityTypifiend> consultarAgente(String agente); // CONSULTAR POR AGENTE
+    List<DtoAllTypifiend> listarAll(); // LISTAR TODOS
 
-    List<EntityTypifiend> listar(); // LISTAR TODOS
+    List<DtoAllTypifiend> listar(); // LISTAR TODOS ULTIMOS 3 MESES
 
-    EntityTypifiend guardar(EntityTypifiend entity); //GUARDAR
+    List<DtoAllTypifiend> listarEliminados(); // LISTAR TODOS LOS ELIMINADOS
 
-    List<EntityTypifiend> guardarAll(List<EntityTypifiend> entity); //GUARDARALL
+    DtoAllTypifiend guardar(DtoCreateUpdateTypifiend entity); //GUARDAR
 
-    EntityTypifiend editar(String id, EntityTypifiend agente); // EDITAR
+    List<EntityTypifiend> guardarAll(List<EntityTypifiend> entity); //GUARDARALL OPCIONAL
 
-    EntityTypifiend actualizar(String id, EntityTypifiend usuario); // ACTUALIZAR
+    DtoAllTypifiend editar(String id, DtoCreateUpdateTypifiend agente); // EDITAR
 
+    void eliminar(Long id); // ELIMINAR
+
+    List<DtoPending> consultarPending(); //CONSULTAR PENDIENTES
 }

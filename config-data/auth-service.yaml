@@ -9,10 +9,47 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     prefer-ip-address: true
-  admin-paths:
+  super-admin-paths: #RUTA DE ACCESO PARA SUPER ADMINISTRADOR
     paths:
-      - uri: "/usuario/"
+      - uri: "/user"
         method: "POST"
+      - uri: "/user/savecar/{1}[1-9]+[0-9]*"
+        method: "POST"
+      - uri: "/user/savebike/{1}[1-9]+[0-9]*"
+        method: "POST"
+  agente-support-paths: #RUTA DE ACCESO PARA AGENTE DE SOPORTE
+    paths:
+      - uri: "/user"
+        method: "POST"
+      - uri: "/user/savecar/{1}[1-9]+[0-9]*"
+        method: "POST"
+      - uri: "/user/savebike/{1}[1-9]+[0-9]*"
+        method: "POST"
+  supervisor-support-paths: #RUTA DE ACCESO PARA SUPERVISOR DE SOPORTE
+    paths:
+      - uri: "/user"
+        method: "POST"
+      - uri: "/user/savecar/{1}[1-9]+[0-9]*"
+        method: "POST"
+      - uri: "/user/savebike/{1}[1-9]+[0-9]*"
+        method: "POST"
+  user-admin-paths: #RUTA DE ACCESO PARA ADMINISTRADOR DE USUARIOS
+    paths:
+      - uri: "/user"
+        method: "POST"
+      - uri: "/user/savecar/{1}[1-9]+[0-9]*"
+        method: "POST"
+      - uri: "/user/savebike/{1}[1-9]+[0-9]*"
+        method: "POST"
+  user-paths: #RUTA DE ACCESO PARA USUARIO
+    paths:
+      - uri: "/user"
+        method: "POST"
+      - uri: "/user/savecar/{1}[1-9]+[0-9]*"
+        method: "POST"
+      - uri: "/user/savebike/{1}[1-9]+[0-9]*"
+        method: "POST"
+        
 spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect

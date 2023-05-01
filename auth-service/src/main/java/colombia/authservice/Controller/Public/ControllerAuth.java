@@ -11,7 +11,7 @@ import colombia.authservice.Mapping.Public.RequestDto;
 import colombia.authservice.Mapping.Public.TokenDto;
 import colombia.authservice.Mapping.Usuario.DtoCreateUsuario;
 import colombia.authservice.Messages.Global.MessageDetails;
-import colombia.authservice.Security.jwt.JwtProvider;
+import colombia.authservice.Service.Auth.ImpAuthService;
 import colombia.authservice.Service.Usuario.ImpServiceUsuario;
 import colombia.authservice.Utils.EnumOperacion;
 import jakarta.validation.Valid;
@@ -22,10 +22,6 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,30 +30,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping("/auth")
 public class ControllerAuth {
-
-    @Autowired
-    private AuthenticationManagerBuilder authenticationManagerBuilder;
-
-    @Autowired
-    private JwtProvider jwtProvider;
-
     // INYECCIÓN DE LA IMPLEMENTACIÓN DEL SERVICIO USUARIO
     @Autowired
     private ImpServiceUsuario impUsuario;
+
+    // INYECCIÓN DE LA IMPLEMENTACIÓN DEL SERVICIO DE AUTENTICACIÓN
+    @Autowired
+    private ImpAuthService impAuth;
 
     // LOGIN
     @PostMapping(value = "/login")
     public ResponseEntity<?> login(@Valid @RequestBody DtoLogin login) {
         try {
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    login.getUsername(), login.getPassword());
-            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtProvider.generateToken(authentication);
-            Date vence = jwtProvider.getExpirationFromToken(jwt);
-            String id = jwtProvider.getUserIdFromToken(jwt);
-
-            DtoJwt jwtDto = new DtoJwt(jwt, id, vence);
+            DtoJwt jwtDto = impAuth.login(login);
             return ResponseEntity.ok().body(jwtDto);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
@@ -68,7 +53,7 @@ public class ControllerAuth {
 
     @PostMapping("/validate")
     public ResponseEntity<TokenDto> validate(@RequestParam String token, @RequestBody RequestDto dto) {
-        TokenDto tokenDto = impUsuario.validateToken(token, dto);
+        TokenDto tokenDto = impAuth.validateToken(token, dto);
         if (tokenDto == null)
             return ResponseEntity.badRequest().build();
         return ResponseEntity.ok(tokenDto);
@@ -78,7 +63,7 @@ public class ControllerAuth {
     @PostMapping(value = "/password")
     public ResponseEntity<?> password(@RequestBody DtoPassword dtoPassword) {
         try {
-            String[] respuesta = impUsuario.olvidoPasword(dtoPassword);
+            String[] respuesta = impAuth.olvidoPasword(dtoPassword);
             if (respuesta == null)
                 return ResponseEntity.unprocessableEntity()
                         .body(new MessageDetails(HttpStatus.INTERNAL_SERVER_ERROR, EnumOperacion.CONSULTAR, new Date(),
@@ -95,7 +80,7 @@ public class ControllerAuth {
     @PostMapping(value = "/password/new")
     public ResponseEntity<?> passwordNew(@Valid @RequestBody DtoNewPassword dtoPassword) {
         try {
-            boolean respuesta = impUsuario.newPasword(dtoPassword);
+            boolean respuesta = impAuth.newPasword(dtoPassword);
             if (!respuesta)
                 return ResponseEntity.unprocessableEntity()
                         .body(new MessageDetails(HttpStatus.UNAUTHORIZED, EnumOperacion.MODIFICAR, new Date(),
@@ -130,7 +115,7 @@ public class ControllerAuth {
     @PostMapping(value = "/email")
     public ResponseEntity<?> valideEmail(@NotNull @RequestBody DtoEmail email) {
         try {
-            return ResponseEntity.ok().body(impUsuario.valideMail(email.getEmail()));
+            return ResponseEntity.ok().body(impAuth.valideMail(email.getEmail()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(new MessageDetails(HttpStatus.INTERNAL_SERVER_ERROR, EnumOperacion.CONSULTAR, new Date(),
@@ -142,7 +127,7 @@ public class ControllerAuth {
     @PostMapping(value = "/email/valide")
     public ResponseEntity<?> valideEmailKey(@NotNull @RequestBody String[] valide) {
         try {
-            return ResponseEntity.ok().body(impUsuario.valideMailKey(valide));
+            return ResponseEntity.ok().body(impAuth.valideMailKey(valide));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(new MessageDetails(HttpStatus.INTERNAL_SERVER_ERROR, EnumOperacion.CONSULTAR, new Date(),

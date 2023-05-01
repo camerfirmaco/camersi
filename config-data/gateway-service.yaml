@@ -30,7 +30,7 @@ spring:
         - id: auth-service
           uri: lb://auth-service
           predicates:
-            - Path=/auth/**
+            - Path=/auth/** , /users/**
         - id: support-service
           uri: lb://support-service
           predicates:

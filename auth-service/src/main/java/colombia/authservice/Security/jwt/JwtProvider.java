@@ -1,5 +1,6 @@
 package colombia.authservice.Security.jwt;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import colombia.authservice.Service.Usuario.ImpServiceUsuario;
+import colombia.authservice.Mapping.Public.RequestDto;
+import colombia.authservice.Model.Usuario.InterfaceUsuario;
+import colombia.authservice.Router.RouteValidator;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -35,7 +38,11 @@ public class JwtProvider {
 
     // INYECCIÓN DE LA IMPLEMENTACIÓN DEL SERVICIO USUARIO
     @Autowired
-    private ImpServiceUsuario impUsuario;
+    private InterfaceUsuario impUsuario;
+
+    // INYECCIÓN DE RUTAS PARA VALIDACIÓN
+    @Autowired
+    private RouteValidator routeValidator;
 
     // METODO CREADOR DE JWT
     public String generateToken(Authentication authentication) {
@@ -46,7 +53,8 @@ public class JwtProvider {
 
         Map<String, Object> claims = new HashMap<>();
         claims = Jwts.claims().setSubject(mainUser.getUsername());
-        claims.put("role", mainUser.getAuthorities().toArray());
+        Object[] roles = mainUser.getAuthorities().toArray();
+        claims.put("role", getRoleStrings(roles));
 
         // CREACIÓN DE JWT RETORNO
         return Jwts.builder().setSubject(mainUser.getUsername()) // ASIGNACIÓN DE JWT - USERNAME
@@ -65,9 +73,20 @@ public class JwtProvider {
     // OBTENER EL ID DEL USUARIO CON EL TOKEN
     public String getUserIdFromToken(String token) {
         String id = impUsuario
-                .consultarEmail(Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject()).get()
+                .findByEmail(Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject()).get()
                 .getId();
         return id;
+    }
+
+    // OBTENER LOS ROLES DEL USUARIO CON EL TOKEN
+    public ArrayList<String> getRolesFromToken(String token) {
+        Object objeto = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().get("role");
+        if (objeto != null) {
+            ArrayList<String> roles = (ArrayList<String>) objeto;
+            return roles;
+        } else {
+            return null;
+        }
     }
 
     // OBTENER FECHA DE EXPIRACIÓN DEL TOKEN
@@ -76,21 +95,34 @@ public class JwtProvider {
     }
 
     // VALIDAR TOKEN CON LA FIRMA SECRETA
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, RequestDto ruta) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-            return true;
         } catch (MalformedJwtException e) {
             logger.error("Token mal formado");
+            return false;
         } catch (UnsupportedJwtException e) {
             logger.error("Token no soportado");
+            return false;
         } catch (ExpiredJwtException e) {
             logger.error("Token expirado");
+            return false;
         } catch (IllegalArgumentException e) {
             logger.error("Token vacío");
+            return false;
         } catch (SignatureException e) {
             logger.error("Fail en la firma");
+            return false;
         }
-        return false;
+        return routeValidator.isRoute(ruta, getRolesFromToken(token));
+    }
+
+    // ROLES PARA ASIGNACIÓN EN CREACIÓN DE TOKEN
+    private ArrayList<String> getRoleStrings(Object[] role) {
+        ArrayList<String> roles = new ArrayList<String>();
+        for (Object object : role) {
+            roles.add(object.toString());
+        }
+        return roles;
     }
 }

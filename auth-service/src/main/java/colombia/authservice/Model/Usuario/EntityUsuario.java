@@ -114,6 +114,28 @@ public class EntityUsuario {
     @JoinTable(name = "usuario_role", joinColumns = @JoinColumn(name = "id_usuario", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "id_role", referencedColumnName = "id"))
     private List<EntityRole> roles;
 
+    public EntityUsuario(EnumTipoDocumento tipoDocumento, String identificacion, String email, String nombre,
+            String primerApellido, String segundoApellido, String password, Long telefono, EnumGenero genero,
+            Boolean habilitado, Boolean activo, Boolean bloqueado, Boolean verificarEmail, Boolean verificarTelefono,
+            EntityCargo cargo, List<EntityRole> roles) {
+        this.tipoDocumento = tipoDocumento;
+        this.identificacion = identificacion;
+        this.email = email;
+        this.nombre = nombre;
+        PrimerApellido = primerApellido;
+        this.segundoApellido = segundoApellido;
+        this.password = password;
+        this.telefono = telefono;
+        this.genero = genero;
+        this.habilitado = habilitado;
+        this.activo = activo;
+        this.bloqueado = bloqueado;
+        this.verificarEmail = verificarEmail;
+        this.verificarTelefono = verificarTelefono;
+        this.cargo = cargo;
+        this.roles = roles;
+    }
+
     public EntityUsuario(String id, EnumTipoDocumento tipoDocumento, String identificacion, String email, String nombre,
             String primerApellido, String segundoApellido, String password, Long telefono, EnumGenero genero,
             String imagen, Boolean habilitado, Boolean activo, Boolean bloqueado, Boolean verificarEmail,
