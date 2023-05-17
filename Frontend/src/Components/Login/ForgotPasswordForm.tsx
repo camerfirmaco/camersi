@@ -11,7 +11,7 @@ const { Title } = Typography;
 
 const ForgotPasswordForm: React.FC = () => {
     const [input, setInput] = useState(false);
-    const [mensaje, setMensaje] = useState(String);
+    const [mensaje, setMensaje] = useState<string>("");
     const [alert, setAlert] = useState(true);
     const [forgot, setForgot] = useState(false);
     const onFinish = (values: any) => {

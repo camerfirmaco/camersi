@@ -38,9 +38,9 @@ const options = [
 
 const FormLogin: React.FC = () => {
 
-    const [code, setCode] = useState(String);
+    const [code, setCode] = useState<string>("");
     const [completed, setCompleted] = useState(false);
-    const [mensaje, setMensaje] = useState(String);
+    const [mensaje, setMensaje] = useState<string>("");
     const [alert, setAlert] = useState(true);
     const [verificar, setVerificar] = useState(false);
     const [resultado, setResultado] = useState(false);

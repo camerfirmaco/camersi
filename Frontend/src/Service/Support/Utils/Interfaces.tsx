@@ -1,29 +1,42 @@
 interface DataTipyfiend {
     id: React.Key,
-    emision: String,
-    documento: Number,
-    nombre: String,
-    telefono: String,
-    company: String,
-    email: String,
+    emision?: Date,
+    documento?: Number,
+    nombre?: string,
+    telefono?: string,
+    company?: string,
+    email?: string,
     cetificado: etiqueta,
     soporte: etiqueta,
-    fecha: String,
-    hora: String,
+    fecha: Date,
+    hora: string,
     observacion: string,
     estado: Boolean,
     tiempo: number,
     categoria: etiqueta,
-    agente: String,
+    agente: string,
     etiquetas: etiqueta[],
-    emilinado: Boolean
+    evidencia: Boolean
+  }
+
+  interface DataUserTipyfiend {
+    documento?: Number,
+    nombre?: string,
+    telefono?: string,
+    company?: string,
+    email?: string,
+    certificado: CertiUser[],
+  }
+  interface CertiUser {
+    certificado: etiqueta,
+    emision: Date,
   }
   
   enum etiqueta {
     ACTIVACION = "ACTIVACION",
     DESBLOQUEO = "DESBLOQUEO",
-    ACOMPAÑAMIENTO = "ACOMPAÑAMIENTO",
-    OPERACIONES = "OPERAQCIONES",
+    ACOMPANAMIENTO = "ACOMPANAMIENTO",
+    OPERACIONES = "OPERACIONES",
     EQUIVOCADO = "EQUIVOCADO",
     NO_CONTESTA = "NO_CONTESTA",
     CONSULTA = "CONSULTA",
@@ -33,8 +46,6 @@ interface DataTipyfiend {
     ERROR_EMISION = "ERROR_EMISION",
     CRED_OLVIDO = "CRED_OLVIDO",
     CRED_RECIBIDA = "CRED_RECIBIDA",
-    PRIMERA_VEZ = "PRIMERA_VEZ",
-    VUCE_TOP = "VUCE_TOP",
     REENVIAR = "REENVIAR",
     DEPURACION = "DEPURACION",
     FNA = "FNA",
@@ -59,7 +70,7 @@ interface DataTipyfiend {
     ACTIVACION = "ACTIVACION",
     DESBLOQUEO = "DESBLOQUEO",
     FIRMADO = "FIRMADO",
-    ACOMPAÑAMIENTO = "ACOMPAÑAMIENTO",
+    ACOMPANAMIENTO = "ACOMPANAMIENTO",
     OPERACIONES = "OPERAQCIONES",
     EQUIVOCADO = "EQUIVOCADO",
     NO_CONTESTA = "NO_CONTESTA",
@@ -73,8 +84,6 @@ interface DataTipyfiend {
     ERROR_EMISION = "ERROR_EMISION",
     CRED_OLVIDO = "CRED_OLVIDO",
     CRED_RECIBIDA = "CRED_RECIBIDA",
-    PRIMERA_VEZ = "PRIMERA_VEZ",
-    VUCE_TOP = "VUCE_TOP",
     REENVIAR = "REENVIAR",
     DEPURACION = "DEPURACION",
     FNA = "FNA",
@@ -106,5 +115,25 @@ interface DataTipyfiend {
     FINE = "FINE"
   }
 
-export { etiqueta, categoria, typeResultMethod }
-export type { DataTipyfiend}
+  enum Observaciones{
+    GROCESO,
+    AGRECIVO,
+    MOLESTO,
+    PC_LENTO,
+    PROCESO_LENTO,
+    REUNION,
+    ANYDESK,
+    TEAMVIEWER,
+    COLGO,
+    CAPACITACION,
+    REINSTALAR,
+    DESINSTALACION_OTRA_ENTIDAD,
+    CREDENCIALES,
+    SIIF,
+    MAC,
+    LLAMADA,
+    SUPER_SALUD
+  }
+
+export { etiqueta, categoria, typeResultMethod, Observaciones }
+export type { DataTipyfiend, DataUserTipyfiend, CertiUser}

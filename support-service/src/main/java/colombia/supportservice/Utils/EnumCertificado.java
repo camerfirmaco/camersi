@@ -9,4 +9,6 @@ public enum EnumCertificado {
     RMAIL,
     P12,
     CAMERCLOUD,
+    NA,
+    FNA,
 }

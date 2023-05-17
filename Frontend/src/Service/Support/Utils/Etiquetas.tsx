@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, SettingOutlined, UserOutlined, CloseCircleOutlined, LoadingOutlined, CloudOutlined, FormOutlined, DesktopOutlined, AuditOutlined, MinusSquareOutlined, MailOutlined, ExclamationCircleOutlined, StarOutlined, ExceptionOutlined, ApiOutlined, WarningOutlined, MinusCircleOutlined, UsbOutlined, SafetyOutlined, DownloadOutlined, UnlockOutlined, TeamOutlined, PhoneOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { SecurityScanOutlined, CloseCircleOutlined, LoadingOutlined, CloudOutlined, FormOutlined, DesktopOutlined, AuditOutlined, MinusSquareOutlined, MailOutlined, ExclamationCircleOutlined, StarOutlined, ExceptionOutlined, ApiOutlined, WarningOutlined, MinusCircleOutlined, UsbOutlined, SafetyOutlined, DownloadOutlined, UnlockOutlined, TeamOutlined, PhoneOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import logoVuce from '../../../assets/img/vuce-logo.png';
 import { etiqueta } from './Interfaces';
 import { Tag } from 'antd';
@@ -8,8 +8,8 @@ const tapEtiqueta = (etiq: etiqueta | undefined) => {
       case etiqueta.ACTIVACION:
         return <Tag icon={<SafetyOutlined />} color="success">Activación</Tag>;
       case etiqueta.DESBLOQUEO:
-        return <Tag icon={<UnlockOutlined />} color="warning">Desbloqueo</Tag>;
-      case etiqueta.ACOMPAÑAMIENTO:
+        return <Tag icon={<UnlockOutlined />} color="processing">Desbloqueo</Tag>;
+      case etiqueta.ACOMPANAMIENTO:
         return <Tag icon={<TeamOutlined />} color="success">Acompañamiento</Tag>;
       case etiqueta.EQUIVOCADO:
         return <Tag icon={<CloseCircleOutlined />} color="error">Equivocado</Tag>;
@@ -24,15 +24,11 @@ const tapEtiqueta = (etiq: etiqueta | undefined) => {
       case etiqueta.NA:
         return <Tag icon={<MinusCircleOutlined />} color="default">{etiq}</Tag>;
       case etiqueta.ERROR_EMISION:
-        return <Tag icon={<ApiOutlined />} color="volcano">Error en la emisión</Tag>;
+        return <Tag icon={<ApiOutlined />} color="error">Error en la emisión</Tag>;
       case etiqueta.CRED_OLVIDO:
-        return <Tag icon={<ExclamationCircleOutlined />} color="orange">Credenciales olvidadas</Tag>;
+        return <Tag icon={<ExclamationCircleOutlined />} color="error">Credenciales olvidadas</Tag>;
       case etiqueta.CRED_RECIBIDA:
-        return <Tag icon={<ExceptionOutlined />} color="orange">Credenciales No recibidas</Tag>;
-      case etiqueta.PRIMERA_VEZ:
-        return <Tag icon={<StarOutlined />} color="lime">Primera vez</Tag>;
-      case etiqueta.VUCE_TOP:
-        return <Tag icon={<img width={30} alt='logoVuce' src={logoVuce} />} color="processing">Activación de Vuce</Tag>;
+        return <Tag icon={<ExceptionOutlined />} color="error">Credenciales No recibidas</Tag>;
       case etiqueta.REENVIAR:
         return <Tag icon={<MailOutlined />} color="processing">Reenvio de correo</Tag>;
       case etiqueta.DEPURACION:
@@ -62,15 +58,17 @@ const tapEtiqueta = (etiq: etiqueta | undefined) => {
       case etiqueta.CAMERCLOUD:
         return <Tag icon={<CloudOutlined />} color="default">{etiq}</Tag>;
       case etiqueta.CALLBACK:
-        return <Tag icon={<PhoneOutlined />} color="success">{etiq}</Tag>;
+        return <Tag icon={<PhoneOutlined />} color="default">{etiq}</Tag>;
       case etiqueta.CALLINPUT:
-        return <Tag icon={<PhoneOutlined />} color="success">{etiq}</Tag>;
+        return <Tag icon={<PhoneOutlined />} color="default">{etiq}</Tag>;
       case etiqueta.OTROS:
         return <Tag icon={<QuestionCircleOutlined />} color="default">{etiq}</Tag>;
       case etiqueta.REUNION:
         return <Tag icon={<DesktopOutlined />} color="default">Reunión</Tag>;
+        case etiqueta.OPERACIONES:
+          return <Tag icon={<SecurityScanOutlined />} color="error">Operaciones</Tag>;
       default:
-        return <Tag icon={<MinusCircleOutlined />} color="default">SIN ETIQUETA</Tag>;
+        return <></>;
     }
   }
 

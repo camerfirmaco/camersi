@@ -1,7 +1,7 @@
 package colombia.supportservice.Mapping;
 
 import java.util.Date;
-import java.sql.Time;
+
 
 import colombia.supportservice.Utils.EnumCategoria;
 import colombia.supportservice.Utils.EnumCertificado;
@@ -39,7 +39,7 @@ public class DtoCreateUpdateTypifiend {
     // FECHA DEL SOPORTE
     private Date fecha;
     // HORA DEL SOPORTE
-    private Time hora;
+    private Date hora;
     // OBSERVACIONES DEL SOPORTER
     private String observacion;
     // ESTADO DEL SOPORTE
@@ -50,10 +50,12 @@ public class DtoCreateUpdateTypifiend {
     private EnumCategoria categoria;
     // AGENTE QUIEN REALIZA EL SOPORTE
     private String agente;
+    // EVIDENCIAS
+    private Boolean evidencia;
     public DtoCreateUpdateTypifiend(Long id, Date emision, String documento, String nombre, String telefono,
             String company, String email, EnumCertificado cetificado, EnumSoporte soporte, EnumSubSoporte subSoporte,
-            Date fecha, Time hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria,
-            String agente) {
+            Date fecha, Date hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria,
+            String agente, Boolean evidencia) {
         this.id = id;
         this.emision = emision;
         this.documento = documento;
@@ -71,10 +73,11 @@ public class DtoCreateUpdateTypifiend {
         this.tiempo = tiempo;
         this.categoria = categoria;
         this.agente = agente;
+        this.evidencia = evidencia;
     }
     public DtoCreateUpdateTypifiend(Date emision, String documento, String nombre, String telefono, String company,
             String email, EnumCertificado cetificado, EnumSoporte soporte, EnumSubSoporte subSoporte, Date fecha,
-            Time hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria, String agente) {
+            Date hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria, String agente, Boolean evidencia) {
         this.emision = emision;
         this.documento = documento;
         this.nombre = nombre;
@@ -91,6 +94,7 @@ public class DtoCreateUpdateTypifiend {
         this.tiempo = tiempo;
         this.categoria = categoria;
         this.agente = agente;
+        this.evidencia = evidencia;
     }
 
     

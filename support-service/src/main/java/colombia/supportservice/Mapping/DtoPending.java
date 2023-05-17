@@ -1,6 +1,6 @@
 package colombia.supportservice.Mapping;
 
-import java.sql.Time;
+
 import java.util.Date;
 
 import colombia.supportservice.Utils.EnumCategoria;
@@ -38,7 +38,7 @@ public class DtoPending {
     // FECHA DEL SOPORTE
     private Date fecha;
     // HORA DEL SOPORTE
-    private Time hora;
+    private Date hora;
     // OBSERVACIONES DEL SOPORTER
     private String observacion;
     // ESTADO DEL SOPORTE
@@ -55,7 +55,7 @@ public class DtoPending {
     private Long guia;
     public DtoPending(Long id, Date emision, String documento, String nombre, String telefono, String company,
             String email, EnumCertificado cetificado, EnumSoporte soporte, EnumSubSoporte subSoporte, Date fecha,
-            Time hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria, String agente,
+            Date hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria, String agente,
             Boolean pendiente, Long guia) {
         this.id = id;
         this.emision = emision;

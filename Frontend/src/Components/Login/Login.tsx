@@ -11,7 +11,7 @@ import { SaveSignIn, SingIn } from '../../Service/Login/SignInData';
 
 const Login: React.FC = () => {
     const [form] = Form.useForm();
-    const [mensaje, setMensaje] = useState(String);
+    const [mensaje, setMensaje] = useState<string>("");
     const [alert, setAlert] = useState(true);
     const [login, setLogin] = useState(false);
     const singIn = SingIn();

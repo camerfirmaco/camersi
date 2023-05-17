@@ -120,7 +120,7 @@ const Dashboard: React.FC = () => {
             <TableGetSupport />
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Camerfirma Colombia ©2023 Creado por Marcos :p</Footer>
+        <Footer style={{ textAlign: 'center' }}>Camerfirma Colombia SAS ©2023 | CamerSI</Footer>
         {!login ?<Navigate to="/" replace />:<></>}
       </Layout>
     </Layout>

@@ -1,7 +1,7 @@
 package colombia.supportservice.Mapping;
 
 import java.util.Date;
-import java.sql.Time;
+
 
 import colombia.supportservice.Utils.EnumCategoria;
 import colombia.supportservice.Utils.EnumCertificado;
@@ -39,7 +39,7 @@ public class DtoAllTypifiend {
     // FECHA DEL SOPORTE
     private Date fecha;
     // HORA DEL SOPORTE
-    private Time hora;
+    private Date hora;
     // OBSERVACIONES DEL SOPORTER
     private String observacion;
     // ESTADO DEL SOPORTE
@@ -53,7 +53,7 @@ public class DtoAllTypifiend {
 
     public DtoAllTypifiend(Long id, Date emision, String documento, String nombre, String telefono, String company,
             String email, EnumCertificado cetificado, EnumSoporte soporte, EnumSubSoporte subSoporte, Date fecha,
-            Time hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria, String agente) {
+            Date hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria, String agente) {
         this.id = id;
         this.emision = emision;
         this.documento = documento;

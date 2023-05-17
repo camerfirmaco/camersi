@@ -10,6 +10,7 @@ import BasePassword from './Components/Login/BasePassword'
 import EmailSent from './Components/Login/EmailSent'
 import Dashboard from './Components/Layout/Content/Dashboard'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import RegisterTipyfiend from './Components/Support/RegisterTipyfiend'
 
 const queryClient = new QueryClient();
 
@@ -34,12 +35,17 @@ const router = createBrowserRouter([
   },
   {
     path: "/support",
-    element: <Dashboard />
+    element: <Dashboard />,
   },
   {
     path: "/pruebas",
     element: <App />
   },
+  {
+    path: "/tipyfiend",
+    element: <RegisterTipyfiend />
+  }
+
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

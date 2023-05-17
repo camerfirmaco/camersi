@@ -70,14 +70,16 @@ public class ImpServiceTypifiend implements ServiceTypifiend {
             EntityTypifiend entity = new EntityTypifiend(dto.getEmision(), dto.getDocumento(), dto.getNombre(),
                     dto.getTelefono(), dto.getCompany(), dto.getEmail(), dto.getCetificado(), dto.getSoporte(),
                     dto.getSubSoporte(), dto.getFecha(), dto.getHora(), dto.getObservacion(), dto.getEstado(),
-                    dto.getTiempo(), dto.getCategoria(), dto.getAgente(), false, false, null);
+                    dto.getTiempo(), dto.getCategoria(), dto.getAgente(), false, false, null, dto.getEvidencia());
             return entity;
         }
         EntityTypifiend entityBD = interfaceTypifiend.findById(dto.getId()).get();
-        EntityTypifiend entity = new EntityTypifiend(entityBD.getId(), dto.getEmision(), dto.getDocumento(), dto.getNombre(),
+        EntityTypifiend entity = new EntityTypifiend(entityBD.getId(), dto.getEmision(), dto.getDocumento(),
+                dto.getNombre(),
                 dto.getTelefono(), dto.getCompany(), dto.getEmail(), dto.getCetificado(), dto.getSoporte(),
                 dto.getSubSoporte(), dto.getFecha(), dto.getHora(), dto.getObservacion(), dto.getEstado(),
-                dto.getTiempo(), dto.getCategoria(), entityBD.getAgente(), entityBD.getEliminado(), entityBD.getPendiente(), entityBD.getGuia());
+                dto.getTiempo(), dto.getCategoria(), entityBD.getAgente(), entityBD.getEliminado(),
+                entityBD.getPendiente(), entityBD.getGuia(), entityBD.getEvidencia());
         return entity;
     }
 
@@ -98,8 +100,15 @@ public class ImpServiceTypifiend implements ServiceTypifiend {
             EntityTypifiend entity = i.next();
             if (entity.getFecha().getTime() >= getFecha(-6).getTime()) {
                 if (!entity.getEliminado()) {
-                    dtos.add(tipifiendAll(entity));
+                    if (!entity.getPendiente()) {
+                        String agente = entity.getAgente();
+                        if (agente != null) {
+                            entity.setAgente(feignUser.getAgentSupport(agente).getNombre());
+                        }
+                        dtos.add(tipifiendAll(entity));
+                    }
                 }
+
             }
         }
         return dtos;
@@ -115,7 +124,9 @@ public class ImpServiceTypifiend implements ServiceTypifiend {
             EntityTypifiend entity = i.next();
             if (entity.getFecha().getTime() >= getFecha(-3).getTime()) {
                 if (!entity.getEliminado()) {
-                    dtos.add(typifiendAgente(entity));
+                    if (!entity.getPendiente()) {
+                        dtos.add(typifiendAgente(entity));
+                    }
                 }
             }
         }
@@ -132,7 +143,9 @@ public class ImpServiceTypifiend implements ServiceTypifiend {
 
             if (entity.getFecha().getTime() >= getFecha(-3).getTime()) {
                 if (!entity.getEliminado()) {
-                    dtos.add(tipifiendAll(entity));
+                    if (!entity.getPendiente()) {
+                        dtos.add(tipifiendAll(entity));
+                    }
                 }
             }
         }
@@ -152,8 +165,7 @@ public class ImpServiceTypifiend implements ServiceTypifiend {
         return saveAll(entity);
     }
 
-
-    //EDITAR TYPIFIEND
+    // EDITAR TYPIFIEND
     @Override
     public DtoAllTypifiend editar(String id, DtoCreateUpdateTypifiend agente) {
         EntityTypifiend agent = createTypifiend(agente);
@@ -162,11 +174,11 @@ public class ImpServiceTypifiend implements ServiceTypifiend {
         return tipifiendAll(interfaceTypifiend.save(agent));
     }
 
-    //ELIMINAR TYPIFIEND
+    // ELIMINAR TYPIFIEND
     @Override
     public void eliminar(Long id) {
         EntityTypifiend typifiend = interfaceTypifiend.findById(id).get();
-        if (typifiend != null){
+        if (typifiend != null) {
             typifiend.setEliminado(true);
             interfaceTypifiend.save(typifiend);
         }
@@ -185,7 +197,7 @@ public class ImpServiceTypifiend implements ServiceTypifiend {
         return dtos;
     }
 
-    //CONSULTAR TODOS EL ULTIMO AÑO
+    // CONSULTAR TODOS EL ULTIMO AÑO
     @Override
     public List<DtoAllTypifiend> listarAll() {
         Iterator<EntityTypifiend> i = interfaceTypifiend.findAll().iterator();
@@ -195,7 +207,9 @@ public class ImpServiceTypifiend implements ServiceTypifiend {
 
             if (entity.getFecha().getTime() >= getFecha(-12).getTime()) {
                 if (!entity.getEliminado()) {
-                    dtos.add(tipifiendAll(entity));
+                    if (!entity.getPendiente()) {
+                        dtos.add(tipifiendAll(entity));
+                    }
                 }
             }
         }

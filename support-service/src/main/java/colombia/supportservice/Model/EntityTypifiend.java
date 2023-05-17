@@ -1,7 +1,7 @@
 package colombia.supportservice.Model;
 
 import java.util.Date;
-import java.sql.Time;
+
 
 import org.hibernate.annotations.NaturalId;
 
@@ -66,7 +66,7 @@ public class EntityTypifiend {
     private Date fecha;
     // HORA DEL SOPORTE
     @Column(nullable = false)
-    private Time hora;
+    private Date hora;
     // OBSERVACIONES DEL SOPORTER
     @Column(nullable = false, columnDefinition = "TEXT")
     private String observacion;
@@ -96,10 +96,14 @@ public class EntityTypifiend {
     @Column(nullable = true)
     private Long guia;
 
+    // PENDIENTE DE LLAMAR
+    @Column(nullable = true)
+    private Boolean evidencia;
+
     public EntityTypifiend(Long id, Date emision, String documento, String nombre, String telefono, String company,
             String email, EnumCertificado cetificado, EnumSoporte soporte, EnumSubSoporte subSoporte, Date fecha,
-            Time hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria, String agente,
-            Boolean eliminado, Boolean pendiente, Long guia) {
+            Date hora, String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria, String agente,
+            Boolean eliminado, Boolean pendiente, Long guia, Boolean evidencia) {
         this.id = id;
         this.emision = emision;
         this.documento = documento;
@@ -120,12 +124,13 @@ public class EntityTypifiend {
         this.eliminado = eliminado;
         this.pendiente = pendiente;
         this.guia = guia;
+        this.evidencia = evidencia;
     }
 
     public EntityTypifiend(Date emision, String documento, String nombre, String telefono, String company, String email,
-            EnumCertificado cetificado, EnumSoporte soporte, EnumSubSoporte subSoporte, Date fecha, Time hora,
+            EnumCertificado cetificado, EnumSoporte soporte, EnumSubSoporte subSoporte, Date fecha, Date hora,
             String observacion, Boolean estado, Integer tiempo, EnumCategoria categoria, String agente,
-            Boolean eliminado, Boolean pendiente, Long guia) {
+            Boolean eliminado, Boolean pendiente, Long guia, Boolean evidencia) {
         this.emision = emision;
         this.documento = documento;
         this.nombre = nombre;
@@ -145,6 +150,7 @@ public class EntityTypifiend {
         this.eliminado = eliminado;
         this.pendiente = pendiente;
         this.guia = guia;
+        this.evidencia = evidencia;
     }
     
 
